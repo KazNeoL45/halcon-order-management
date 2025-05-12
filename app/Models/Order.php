@@ -18,9 +18,9 @@ class Order extends Model
         'total'
     ];
 
-    public function user(): BelongsTo
+    public function client(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Client::class);
     }
 
     public function items(): HasMany

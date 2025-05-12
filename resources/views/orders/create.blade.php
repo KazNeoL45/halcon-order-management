@@ -14,12 +14,12 @@
             @csrf
             <div class="mb-3 d-flex gap-3">
               <div clas="d-flex flex-column flex-grow-1">
-                <label for="inputName" class="form-label"><strong>UserId:</strong></label>
+                <label for="inputName" class="form-label"><strong>ClientId:</strong></label>
                   <input
                     type="text"
-                    name="user_id"
+                    name="client_id"
                     class="form-control"
-                    id="inputUser"
+                    id="inputClient"
                     placeholder="Name">
                 </div>
               <div clas="d-flex flex-column flex-grow-1">

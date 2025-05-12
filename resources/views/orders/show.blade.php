@@ -30,8 +30,8 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <strong>User:</strong> <br/>
-                    <span class="d-block">{{ $order->user->name }}</span>
+                    <strong>Client:</strong> <br/>
+                    <span class="d-block">{{ $order->client->name }}</span>
                 </div>
             </div>
         </div>

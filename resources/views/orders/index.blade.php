@@ -18,7 +18,7 @@
             <thead>
                 <tr>
                     <th width="80px">OrderId</th>
-                    <th>User</th>
+                    <th>Client</th>
                     <th>Status</th>
                     <th>Total</th>
                 </tr>
@@ -28,7 +28,7 @@
                 @forelse ($orders as $order)
                     <tr>
                         <td>{{ $order->id }}</td>
-                        <td>{{ $order->user->name }}</td>
+                        <td>{{ $order->client->name }}</td>
                         <td>{{ $order->status }}</td>
                         <td>{{ $order->total }}</td>
                         <td>
