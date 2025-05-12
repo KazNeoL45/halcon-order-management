@@ -21,17 +21,31 @@
                     <th>Client</th>
                     <th>Status</th>
                     <th>Total</th>
+                    <th width="230px"></th>
                 </tr>
             </thead>
-
             <tbody>
                 @forelse ($orders as $order)
                     <tr>
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->client->name }}</td>
-                        <td>{{ $order->status }}</td>
-                        <td>{{ $order->total }}</td>
                         <td>
+                         @php
+                             $statusClass = match($order->status) {
+                                 'pending' => 'badge bg-warning text-dark',
+                                 'paid' => 'badge bg-primary',
+                                 'shipped' => 'badge bg-info text-dark',
+                                 'delivered' => 'badge bg-success',
+                                 default => 'badge bg-secondary',
+                             };
+                         @endphp
+                         <p class="{{ $statusClass }} d-flex flex-row justify-content-center
+                         lead font-weight-bold align-items-center">
+                             {{ ucfirst($order->status) }}
+                         </p>
+                        </td>
+                        <td>{{ $order->total }}</td>
+                        <td class="d-flex flex-row-reverse">
                             <form action="{{ route('orders.destroy',$order->id) }}" method="POST">
                                 <a class="btn btn-info btn-sm"
                                 href="{{ route('orders.show',$order->id) }}">

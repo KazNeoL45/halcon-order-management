@@ -44,9 +44,9 @@ class OrdersController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Order $orders)
+    public function edit(Order $order)
     {
-        return view('orders.edit', compact('orders'));
+        return view('orders.edit', compact('order'));
     }
 
     /**
