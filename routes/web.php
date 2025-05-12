@@ -9,7 +9,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/api/client/{clientId}/order/{orderId}', [App\Http\Controllers\OrderApi::class, 'show']);
+Route::get('/api/order', [App\Http\Controllers\OrderApi::class, 'show']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

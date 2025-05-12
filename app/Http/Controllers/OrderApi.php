@@ -3,46 +3,42 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Client;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Payment;
-use App\Models\Products;
+use stdClass;
 
 class OrderApi extends Controller
 {
-    public function show($clientId, $orderId)
+    public function show(Request $request)
     {
-        $order = Order::with([
-            'client',
-            'orderItems.product',
-            'payments'
-        ])->find($orderId);
+        $clientId = $request->query('clientId');
+        $orderId = $request->query('orderId');
 
-        echo "hellou?";
+        #error_log('Client ID: ' . $clientId);
+        #error_log('Client ID: ' . $clientId);
 
-        echo $order;
+        $order = Order::with(['items', 'client'])->find($orderId);
+
+        #error_log('client name ' . $order->client->name);
+
+        $response = new stdClass();
+        $response->client_name = $order->client->name;
+        $response->order_id = $order->id;
+        $response->status = $order->status;
+        $response->total = $order->total;
+        $response->products = $order->items->map(function($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->product->name,
+                'price' => $item->product->price,
+                'quantity' => $item->quantity,
+                'subtotal' => $item->subtotal
+            ];
+        });
 
         if (!$order || $order->client_id != $clientId) {
             return response()->json(['message' => 'Orden no encontrada'], 404);
         }
 
-        $response = [
-            'client_name' => $order->client->name,
-            'order_id' => $order->id,
-            'status' => $order->status,
-            'total' => $order->orderItems->sum('subtotal'),
-            'payment_method' => optional($order->payments->first())->method,
-            'products' => $order->orderItems->map(function($item) {
-                return [
-                    'nombre' => $item->product->name,
-                    'precio' => $item->product->price,
-                    'cantidad' => $item->quantity,
-                    'subtotal' => $item->subtotal
-                ];
-            })
-        ];
-
-        return response()->json($response);
+        return response()->json($response, 200);
     }
 }
