@@ -19,6 +19,8 @@ class ClientFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'phone' => fake()->phoneNumber(),
+            'address_id' => \App\Models\Address::factory(),
         ];
     }
 }

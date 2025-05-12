@@ -12,6 +12,11 @@ class OrderItemSeeder extends Seeder
      */
     public function run(): void
     {
-        OrderItem::factory(10)->create();
+        OrderItem::factory(10)->create()
+        ->each(function ($orderItem) {
+            $order = $orderItem->order;
+            $total = $order->items()->sum('subtotal');
+            $order->update(['total' => $total]);
+        });
     }
 }

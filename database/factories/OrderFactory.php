@@ -19,8 +19,8 @@ class OrderFactory extends Factory
     {
         return [
             'client_id' => Client::factory(),
-            'status' => fake()->randomElement(['pending', 'paid', 'shipped', 'delivered']),
-            'total' => fake()->randomFloat(2, 100, 1000)
+            'status' => fake()->randomElement(['pending', 'shipped', 'delivered']),
+            'total' => 0
         ];
     }
 }

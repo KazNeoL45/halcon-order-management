@@ -18,11 +18,14 @@ class OrderItemFactory extends Factory
      */
     public function definition(): array
     {
+        $product = Products::factory()->create();
+        $quantity = fake()->numberBetween(1, 5);
+
         return [
             'order_id' => Order::factory(),
-            'product_id' => Products::factory(),
-            'quantity' => fake()->numberBetween(1, 5),
-            'subtotal' => fake()->randomFloat(2, 100, 1000)
+            'product_id' => $product->id,
+            'quantity' => $quantity,
+            'subtotal' => $quantity * ($product->price),
         ];
     }
 }
