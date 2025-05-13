@@ -42,8 +42,8 @@ class Order extends Model
         return $this->hasOne(Payment::class);
     }
 
-    public function address()
+    public function address(): BelongsTo
     {
-        return $this->hasOne(Address::class);
+        return $this->belongsTo(Address::class);
     }
 }

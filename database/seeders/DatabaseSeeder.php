@@ -2,8 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use Database\Seeders\CountrySeeder;
+use Database\Seeders\StateSeeder;
+use Database\Seeders\RoleSeeder;
+use Database\Seeders\UserSeeder;
+use Database\Seeders\ProductSeeder;
+use Database\Seeders\ClientSeeder;
+use Database\Seeders\OrderSeeder;
+use Database\Seeders\OrderItemSeeder;
+use Database\Seeders\PaymentSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,13 +21,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            CountrySeeder::class,
+            StateSeeder::class,
             RoleSeeder::class,
             UserSeeder::class,
             ProductSeeder::class,
+            ClientSeeder::class,
             OrderSeeder::class,
             OrderItemSeeder::class,
             PaymentSeeder::class,
-            ClientSeeder::class
         ]);
     }
 }
