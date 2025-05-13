@@ -13,15 +13,15 @@
         <form action="{{ route('orders.store') }}" method="POST">
             @csrf
             <div class="mb-3 d-flex gap-3">
-              <div clas="d-flex flex-column flex-grow-1">
-                <label for="inputName" class="form-label"><strong>ClientId:</strong></label>
-                  <input
-                    type="text"
-                    name="client_id"
-                    class="form-control"
-                    id="inputClient"
-                    placeholder="Name">
-                </div>
+              <div class="d-flex flex-column flex-grow-1">
+                <label for="client_id" class="form-label"><strong>Client:</strong></label>
+                <select name="client_id" id="client_id" class="form-control">
+                  <option value="" disabled selected>Select a client</option>
+                  @foreach($clients as $client)
+                    <option value="{{ $client->id }}">{{ $client->name }}</option>
+                  @endforeach
+                </select>
+              </div>
               <div clas="d-flex flex-column flex-grow-1">
                 <label for="inputName" class="form-label"><strong>Status:</strong></label>
                 <input

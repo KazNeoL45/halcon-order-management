@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Client;
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
@@ -21,7 +22,8 @@ class OrdersController extends Controller
      */
     public function create()
     {
-        return view('orders.create');
+        $clients = Client::all();
+        return view('orders.create', compact('clients'));
     }
 
     /**
