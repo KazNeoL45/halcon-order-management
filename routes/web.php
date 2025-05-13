@@ -18,14 +18,15 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
     Route::get('/orders/create', [OrdersController::class, 'create'])->name('orders.create');
+    Route::get('orders/deleted-list', [OrdersController::class, 'deletedOrders'])->name('orders.deleted'); 
+    Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
     Route::post('/orders', [OrdersController::class, 'store'])->name('orders.store');
     Route::get('/orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
     Route::get('/orders/{order}/edit', [OrdersController::class, 'edit'])->name('orders.edit');
-    Route::put('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update');
+    Route::put('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update'); 
     Route::delete('/orders/{order}', [OrdersController::class, 'destroy'])->name('orders.destroy');
-    // Clients CRUD
+    Route::post('orders/{id}/restore', [OrdersController::class, 'restore'])->name('orders.restore');    
     Route::resource('clients', ClientController::class);
 });
 
