@@ -106,15 +106,59 @@ class OrdersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $orders)
+    public function update(Request $request, Order $order)
     {
+        // Validate order, address, and items (invoice_number unique except current)
         $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'user_id' => 'required|exists:users,id',
-            'quantity' => 'required|integer|min:1',
+            'client_id'       => 'required|exists:clients,id',
+            'invoice_number'  => 'required|unique:orders,invoice_number,' . $order->id,
+            'invoice_date'    => 'required|date',
+            'total'           => 'required|numeric',
+            'notes'           => 'nullable|string',
+            'street'          => 'required|string',
+            'external_number' => 'required|string',
+            'colony'          => 'required|string',
+            'city'            => 'required|string',
+            'state_id'        => 'required|exists:states,id',
+            'zip_code'        => 'required|string',
+            'country_id'      => 'required|exists:countries,id',
+            'product_id'      => 'required|array|min:1',
+            'product_id.*'    => 'required|exists:products,id',
+            'quantity'        => 'required|array|min:1',
+            'quantity.*'      => 'required|integer|min:1',
         ]);
 
-        $orders->update($request->all());
+        // Update or create address
+        $addrData = $request->only([
+            'street', 'external_number', 'colony', 'city', 'state_id', 'zip_code', 'country_id',
+        ]);
+        if ($order->address) {
+            $order->address->update($addrData);
+        } else {
+            $address = Address::create($addrData);
+            $order->address_id = $address->id;
+        }
+
+        // Update order fields
+        $order->update($request->only([
+            'client_id', 'invoice_number', 'invoice_date', 'total', 'notes'
+        ]));
+
+        // Sync items: remove existing and re-add
+        $order->items()->delete();
+        foreach ($request->input('product_id') as $idx => $productId) {
+            $qty = $request->input('quantity')[$idx] ?? 1;
+            $product = Products::find($productId);
+            $order->items()->create([
+                'product_id' => $productId,
+                'quantity'   => $qty,
+                'subtotal'   => $product->price * $qty,
+            ]);
+        }
+
+        // Save in case address_id was set
+        $order->save();
+
         return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
     }
 

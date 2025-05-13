@@ -21,7 +21,8 @@
                         </div>
                         <div class="col-md-3">
                             <label for="invoice_date" class="form-label"><strong>Date & Time</strong></label>
-                            <input type="datetime-local" name="invoice_date" id="invoice_date" class="form-control" value="{{ old('invoice_date', $order->invoice_date->format('Y-m-d\\TH:i')) }}">
+                            <input type="datetime-local" name="invoice_date" id="invoice_date" class="form-control"
+                                value="{{ old('invoice_date', $order->invoice_date) }}">
                         </div>
                         <div class="col-md-3">
                             <label for="total" class="form-label"><strong>Total</strong></label>
@@ -178,28 +179,4 @@
         };
     }
 </script>
-@endsection
-
-            <div class="mb-3">
-                <label for="inputcontent" class="form-label"><strong>Description:</strong></label>
-                <textarea
-                    class="form-control @error('content') is-invalid @enderror"
-                    style="height:150px"
-                    name="description"
-                    id="inputcontent"
-                    placeholder="Hi-Fi Music Reproducer"></textarea>
-                @error('content')
-                    <div class="form-text text-danger">{{ $message }}</div>
-                @enderror
-            </div>
-
-
-            <button type="submit" class="btn btn-success">
-                <i class="fa-solid fa-floppy-disk"></i>
-                Update
-            </button>
-        </form>
-
-    </div>
-</div>
 @endsection
