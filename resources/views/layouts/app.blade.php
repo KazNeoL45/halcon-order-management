@@ -40,6 +40,10 @@
                         :active="request()->routeIs('clients.*')">
                             {{ __('Clients') }}
                         </x-responsive-nav-link>
+                        <x-responsive-nav-link class="text-black" :href="route('users.index')"
+                            :active="request()->routeIs('users.*')">
+                            {{ __('Users') }}
+                        </x-responsive-nav-link>
                     </nav>
                 </aside>
 
