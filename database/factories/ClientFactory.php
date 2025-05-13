@@ -20,7 +20,7 @@ class ClientFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->phoneNumber(),
-            'address_id' => \App\Models\Address::factory(),
+            'tax_information' => fake()->unique()->randomNumber(8),
         ];
     }
 }

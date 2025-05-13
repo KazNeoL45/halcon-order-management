@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\ClientController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,6 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}/edit', [OrdersController::class, 'edit'])->name('orders.edit');
     Route::put('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update');
     Route::delete('/orders/{order}', [OrdersController::class, 'destroy'])->name('orders.destroy');
+    // Clients CRUD
+    Route::resource('clients', ClientController::class);
 });
 
 Route::middleware('auth')->group(function () {

@@ -14,7 +14,7 @@ class Client extends Model
         'name',
         'email',
         'phone',
-        'address_id',
+        'tax_information',
     ];
 
     public function address()
