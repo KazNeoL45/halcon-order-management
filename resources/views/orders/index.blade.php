@@ -102,6 +102,9 @@
                                 <button type="button" class="btn btn-warning btn-sm me-1" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-transit')">
                                     <i class="fa-solid fa-truck"></i> Mark as In Transit
                                 </button>
+                                <button type="button" class="btn btn-success btn-sm me-1" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-delivered')">
+                                    <i class="fa-solid fa-check"></i> Mark as Delivered
+                                </button>
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this order?')">
@@ -130,6 +133,20 @@
                     <div class="flex justify-end">
                         <button type="button" class="btn btn-secondary btn-sm me-2" x-on:click="$dispatch('close')">Cancel</button>
                         <button type="submit" class="btn btn-primary btn-sm">Mark as In Transit</button>
+                    </div>
+                </form>
+            </x-modal>
+            <x-modal name="mark-order-{{ $order->id }}-delivered" focusable>
+                <form action="{{ route('orders.markDelivered', $order) }}" method="POST" enctype="multipart/form-data" class="p-6">
+                    @csrf
+                    <h2 class="text-lg font-medium text-gray-900">Mark Order #{{ $order->id }} as Delivered</h2>
+                    <div class="mt-4 mb-4">
+                        <label for="unload_photo_{{ $order->id }}" class="form-label">Unload Photo</label>
+                        <input type="file" class="form-control" id="unload_photo_{{ $order->id }}" name="unload_photo" required>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" class="btn btn-secondary btn-sm me-2" x-on:click="$dispatch('close')">Cancel</button>
+                        <button type="submit" class="btn btn-success btn-sm">Mark as Delivered</button>
                     </div>
                 </form>
             </x-modal>

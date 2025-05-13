@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update'); 
     Route::delete('/orders/{order}', [OrdersController::class, 'destroy'])->name('orders.destroy');
     Route::post('/orders/{order}/mark-in-transit', [OrdersController::class, 'markInTransit'])->name('orders.markInTransit');
+    Route::post('/orders/{order}/mark-delivered', [OrdersController::class, 'markDelivered'])->name('orders.markDelivered');
     Route::post('orders/{id}/restore', [OrdersController::class, 'restore'])->name('orders.restore');    
     Route::resource('clients', ClientController::class);
 });
