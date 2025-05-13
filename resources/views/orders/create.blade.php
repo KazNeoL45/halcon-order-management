@@ -23,10 +23,6 @@
                     <input type="datetime-local" name="invoice_date" id="invoice_date" class="form-control" value="{{ old('invoice_date', now()->format('Y-m-d\TH:i')) }}">
                 </div>
                 <div class="col-md-3">
-                    <label for="status" class="form-label"><strong>Status</strong></label>
-                    <input type="text" name="status" id="status" class="form-control" value="{{ old('status', 'pending') }}">
-                </div>
-                <div class="col-md-3">
                     <label for="total" class="form-label"><strong>Total</strong></label>
                     <input type="text" name="total" id="total" class="form-control" readonly placeholder="0.00">
                 </div>
@@ -46,12 +42,6 @@
                     <label for="delivery_address" class="form-label"><strong>Delivery Address</strong></label>
                     <textarea name="delivery_address" id="delivery_address" class="form-control" rows="2">{{ old('delivery_address') }}</textarea>
                 </div>
-            </div>
-            <!-- Client Info Preview -->
-            <div id="client_info" class="mb-3">
-                <div><strong>Client Name/Company:</strong> <span id="client_name_display"></span></div>
-                <div><strong>Client Number:</strong> <span id="client_number_display"></span></div>
-                <div><strong>Tax Information:</strong> <span id="tax_info_display"></span></div>
             </div>
             <!-- Additional Notes -->
             <div class="mb-3">
