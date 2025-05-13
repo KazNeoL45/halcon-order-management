@@ -22,6 +22,7 @@ class OrderFactory extends Factory
             'status' => fake()->randomElement(['pending', 'shipped', 'delivered']),
             'invoice_number' => fake()->unique()->randomNumber(8),
             'invoice_date' => fake()->dateTime(),
+            'address_id' => \App\Models\Address::factory(),
             'total' => 0
         ];
     }

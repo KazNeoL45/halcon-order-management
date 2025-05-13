@@ -15,6 +15,9 @@ return new class extends Migration
             $table->dateTime('invoice_date')->after('invoice_number');
             $table->text('delivery_address')->nullable()->after('total');
             $table->text('notes')->nullable()->after('delivery_address');
+            $table->foreignId('address_id')->nullable()->after('delivery_address')
+                ->constrained('addresses')
+                ->onDelete('cascade');
         });
     }
 

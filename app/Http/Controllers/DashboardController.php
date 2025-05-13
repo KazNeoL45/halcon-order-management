@@ -23,8 +23,7 @@ class DashboardController extends Controller
             ->get();
 
         $ordersByRegion = DB::table('orders')
-            ->join('clients', 'orders.client_id', '=', 'clients.id')
-            ->join('addresses', 'clients.address_id', '=', 'addresses.id')
+            ->join('addresses', 'orders.address_id', '=', 'addresses.id')
             ->select('addresses.state as region', DB::raw('count(orders.id) as count'))
             ->groupBy('addresses.state')
             ->orderByDesc('count')

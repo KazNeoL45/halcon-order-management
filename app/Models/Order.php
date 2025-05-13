@@ -19,6 +19,7 @@ class Order extends Model
         'status',
         'total',
         'delivery_address',
+        'address_id',
         'notes',
     ];
 
@@ -39,5 +40,10 @@ class Order extends Model
     public function payment(): HasMany
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function address()
+    {
+        return $this->hasOne(Address::class);
     }
 }

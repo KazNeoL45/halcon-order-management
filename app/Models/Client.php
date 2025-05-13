@@ -17,8 +17,4 @@ class Client extends Model
         'tax_information',
     ];
 
-    public function address()
-    {
-        return $this->hasOne(Address::class);
-    }
 }
