@@ -36,7 +36,6 @@ class OrdersController extends Controller
         // Validate order and items
         $request->validate([
             'client_id'    => 'required|exists:clients,id',
-            'status'       => 'required|string|max:255',
             'total'        => 'required|numeric',
             'product_id'   => 'required|array|min:1',
             'product_id.*' => 'required|exists:products,id',
@@ -44,7 +43,7 @@ class OrdersController extends Controller
             'quantity.*'   => 'required|integer|min:1',
         ]);
         // Create order
-        $order = Order::create($request->only(['client_id', 'status', 'total']));
+        $order = Order::create($request->only(['client_id', 'total']));
         // Attach items
         foreach ($request->input('product_id') as $idx => $productId) {
             $qty = $request->input('quantity')[$idx] ?? 1;

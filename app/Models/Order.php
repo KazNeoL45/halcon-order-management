@@ -18,6 +18,10 @@ class Order extends Model
         'total'
     ];
 
+    protected $attributes = [
+        'status' => 'ordered',
+    ];
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);

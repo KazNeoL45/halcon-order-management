@@ -23,15 +23,6 @@
                 </select>
               </div>
               <div class="d-flex flex-column flex-grow-1">
-                <label for="inputName" class="form-label"><strong>Status:</strong></label>
-                <input
-                    type="text"
-                    name="status"
-                    class="form-control"
-                    id="inputStatus"
-                    placeholder="Status">
-              </div>
-              <div class="d-flex flex-column flex-grow-1">
                 <label for="inputName" class="form-label"><strong>Total:</strong></label>
                 <input
                     type="text"
@@ -41,7 +32,6 @@
                     placeholder="Total">
               </div>
             </div>
-
             <!-- Order items component -->
             <div class="mb-3">
                 <h5>Order Items</h5>
@@ -59,7 +49,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
+                            <td id="selector-">
                                 <select name="product_id[]" class="form-control product-select" style="width:100%;">
                                     <option></option>
                                     @foreach($products as $product)
@@ -81,28 +71,59 @@
     </div>
 </div>
 <script>
-$(document).ready(function(){
-    function initProductSelect(row){
-        row.find('.product-select').select2({
-            placeholder: 'Select a product',
-            allowClear: true,
-            width: 'resolve'
-        });
-    }
-    // initialize select2 on first row
-    initProductSelect($('#items_table tbody tr').first());
-    $('#add_item').click(function(){
-        var row = $('#items_table tbody tr:first').clone();
-        row.find('select').val(null);
-        row.find('input').val(1);
-        $('#items_table tbody').append(row);
-        initProductSelect(row);
-    });
-    $(document).on('click','.remove-item',function(){
-        if ($('#items_table tbody tr').length > 1) {
-            $(this).closest('tr').remove();
+    // Assumes $products is available and each product has 'id' and 'price'
+    var productsData = {
+        @foreach($products as $product)
+            "{{ $product->id }}": {{ $product->price ?? 0 }},
+        @endforeach
+    };
+
+    $(document).ready(function(){
+        function updateTotal() {
+            var total = 0;
+            $('#items_table tbody tr').each(function() {
+                var $row = $(this);
+                var productId = $row.find('.product-select').val();
+                var quantity = parseInt($row.find('input[name="quantity[]"]').val(), 10);
+                var price = 0;
+
+                if (productId && productsData.hasOwnProperty(productId)) {
+                    price = parseFloat(productsData[productId]);
+                }
+
+                if (!isNaN(price) && !isNaN(quantity) && quantity > 0) {
+                    total += price * quantity;
+                }
+            });
+            $('#Inputtotal').val(total.toFixed(2));
         }
+
+        $('#add_item').click(function(){
+            var row = $('#items_table tbody tr:first').clone();
+            row.find('select.product-select').val(''); // Reset product selection
+            row.find('input[name="quantity[]"]').val(1); // Reset quantity to 1
+            $('#items_table tbody').append(row);
+            updateTotal(); // Update total after adding a new row
+        });
+
+        $(document).on('click', '.remove-item', function(){
+            if ($('#items_table tbody tr').length > 1) {
+                $(this).closest('tr').remove();
+                updateTotal(); // Update total after removing a row
+            } else {
+                // Optionally clear the fields of the last row instead of removing it
+                $(this).closest('tr').find('.product-select').val('');
+                $(this).closest('tr').find('input[name="quantity[]"]').val(1);
+                updateTotal();
+            }
+        });
+
+        // Update total when product or quantity changes
+        $(document).on('change', '.product-select', updateTotal);
+        $(document).on('input change', 'input[name="quantity[]"]', updateTotal); // 'input' for immediate update, 'change' for fallback
+
+        // Initial calculation on page load
+        updateTotal();
     });
-});
 </script>
 @endsection
