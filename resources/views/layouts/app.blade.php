@@ -22,7 +22,7 @@
             @include('layouts.navigation')
             <div class="flex">
                 <!-- Sidebar -->
-                <aside class="w-64 bg-white border-r">
+                <aside class="w-64 bg-white border-r h-[calc(100vh-4rem)]">
                     <nav class="mt-6 space-y-1">
                         <x-responsive-nav-link class="text-black" :href="route('dashboard')"
                         :active="request()->routeIs('dashboard')">
