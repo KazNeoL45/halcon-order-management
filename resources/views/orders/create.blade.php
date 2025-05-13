@@ -2,14 +2,22 @@
 
 @section('content')
 
-<div class="card mt-5 max-w-7xl">
+<div class="card mt-5 max-w-7xl" x-data="orderForm()">
     <h2 class="card-header">Create a new Order</h2>
     <div class="card-body">
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <a class="btn btn-primary btn-sm" href="{{ route('orders.index') }}">
             <i class="fa fa-arrow-left"></i>Back</a>
         </div>
-
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form action="{{ route('orders.store') }}" method="POST">
             @csrf
             <!-- Invoice & Order Details -->
@@ -24,7 +32,7 @@
                 </div>
                 <div class="col-md-3">
                     <label for="total" class="form-label"><strong>Total</strong></label>
-                    <input type="text" name="total" id="total" class="form-control" readonly placeholder="0.00">
+                    <input type="text" name="total" id="total" class="form-control" x-bind:value="total.toFixed(2)" readonly placeholder="0.00">
                 </div>
             </div>
             <!-- Client & Delivery -->
@@ -51,31 +59,39 @@
             <!-- Order items component -->
             <div class="mb-3">
                 <h5>Order Items</h5>
-                <table class="table table-bordered" id="items_table">
+                <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Product</th>
                             <th>Quantity</th>
                             <th>
-                                <button type="button" class="btn btn-sm btn-primary" id="add_item">
+                                <button type="button" class="btn btn-sm btn-primary" @click="addItem">
                                     <i class="fa fa-plus"></i> Add Item
                                 </button>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td id="selector-">
-                                <select name="product_id[]" class="form-control product-select" style="width:100%;">
-                                    <option></option>
-                                    @foreach($products as $product)
-                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                    @endforeach
-                                </select>
-                            </td>
-                            <td><input type="number" name="quantity[]" class="form-control" min="1" value="1"></td>
-                            <td><button type="button" class="btn btn-sm btn-danger remove-item"><i class="fa fa-trash"></i></button></td>
-                        </tr>
+                        <template x-for="(item, index) in items" :key="index">
+                            <tr>
+                                <td>
+                                    <select :name="'product_id[' + index + ']'" class="form-control product-select" x-model="item.productId" @change="updateTotal" style="width:100%;">
+                                        <option value="" disabled>Select a product</option>
+                                        @foreach($products as $product)
+                                            <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" :name="'quantity[' + index + ']'" class="form-control" min="1" x-model.number="item.quantity" @input="updateTotal">
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-danger" @click="removeItem(index)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
@@ -87,58 +103,46 @@
     </div>
     </div>
 <script>
-    var productsData = {
-        @foreach($products as $product)
-            "{{ $product->id }}": {{ $product->price ?? 0 }},
-        @endforeach
-    };
-
-    $(document).ready(function(){
-        function updateTotal() {
-            var total = 0;
-            $('#items_table tbody tr').each(function() {
-                var $row = $(this);
-                var productId = $row.find('.product-select').val();
-                var quantity = parseInt($row.find('input[name="quantity[]"]').val(), 10);
-                var price = 0;
-
-                if (productId && productsData.hasOwnProperty(productId)) {
-                    price = parseFloat(productsData[productId]);
+    function orderForm() {
+        return {
+            items: [{ productId: '', quantity: 1 }],
+            productsData: {
+                @foreach($products as $product)
+                    "{{ $product->id }}": {{ $product->price ?? 0 }},
+                @endforeach
+            },
+            total: 0.00,
+            init() {
+                this.updateTotal();
+                // Watch for changes in items to recalculate total
+                this.$watch('items', () => {
+                    this.updateTotal();
+                }, { deep: true });
+            },
+            addItem() {
+                this.items.push({ productId: '', quantity: 1 });
+            },
+            removeItem(index) {
+                if (this.items.length > 1) {
+                    this.items.splice(index, 1);
+                } else {
+                    // Clear the fields of the last item
+                    this.items[index].productId = '';
+                    this.items[index].quantity = 1;
                 }
-
-                if (!isNaN(price) && !isNaN(quantity) && quantity > 0) {
-                    total += price * quantity;
-                }
-            });
-            $('#Inputtotal').val(total.toFixed(2));
-        }
-
-        $('#add_item').click(function(){
-            var row = $('#items_table tbody tr:first').clone();
-            row.find('select.product-select').val(''); // Reset product selection
-            row.find('input[name="quantity[]"]').val(1); // Reset quantity to 1
-            $('#items_table tbody').append(row);
-            updateTotal(); // Update total after adding a new row
-        });
-
-        $(document).on('click', '.remove-item', function(){
-            if ($('#items_table tbody tr').length > 1) {
-                $(this).closest('tr').remove();
-                updateTotal(); // Update total after removing a row
-            } else {
-                // Optionally clear the fields of the last row instead of removing it
-                $(this).closest('tr').find('.product-select').val('');
-                $(this).closest('tr').find('input[name="quantity[]"]').val(1);
-                updateTotal();
+            },
+            updateTotal() {
+                let currentTotal = 0;
+                this.items.forEach(item => {
+                    const price = parseFloat(this.productsData[item.productId] || 0);
+                    const quantity = parseInt(item.quantity, 10);
+                    if (!isNaN(price) && !isNaN(quantity) && quantity > 0) {
+                        currentTotal += price * quantity;
+                    }
+                });
+                this.total = currentTotal;
             }
-        });
-
-        // Update total when product or quantity changes
-        $(document).on('change', '.product-select', updateTotal);
-        $(document).on('input change', 'input[name="quantity[]"]', updateTotal); // 'input' for immediate update, 'change' for fallback
-
-        // Initial calculation on page load
-        updateTotal();
-    });
+        }
+    }
 </script>
 @endsection

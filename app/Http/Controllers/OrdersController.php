@@ -42,7 +42,6 @@ class OrdersController extends Controller
             'client_id'       => 'required|exists:clients,id',
             'invoice_number'  => 'required|unique:orders,invoice_number',
             'invoice_date'    => 'required|date',
-            'status'          => 'required|string|max:255',
             'total'           => 'required|numeric',
             'delivery_address'=> 'nullable|string',
             'notes'           => 'nullable|string',
