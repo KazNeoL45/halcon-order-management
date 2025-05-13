@@ -22,7 +22,7 @@
                   @endforeach
                 </select>
               </div>
-              <div clas="d-flex flex-column flex-grow-1">
+              <div class="d-flex flex-column flex-grow-1">
                 <label for="inputName" class="form-label"><strong>Status:</strong></label>
                 <input
                     type="text"
@@ -31,7 +31,7 @@
                     id="inputStatus"
                     placeholder="Status">
               </div>
-              <div clas="d-flex flex-column flex-grow-1">
+              <div class="d-flex flex-column flex-grow-1">
                 <label for="inputName" class="form-label"><strong>Total:</strong></label>
                 <input
                     type="text"
@@ -40,38 +40,38 @@
                     id="Inputtotal"
                     placeholder="Total">
               </div>
-              <div clas="d-flex flex-column flex-grow-1">
-                <label for="inputName" class="form-label"><strong>
-                    Items
-                </strong>
-                </label>
-                <input
-                    type="text"
-                    name="items"
-                    class="form-control"
-                    id="Inputitems"
-                    placeholder="Fill with items">
-              </div>
             </div>
 
+            <!-- Order items component -->
             <div class="mb-3">
-              <div class="dropdown">
-                <button
-                    class="btn btn-secondary dropdown-toggle"
-                    type="button"
-                    id="dropdownMenuButton"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                >
-                  List order items
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="#">Item1</a>
-                  <a class="dropdown-item" href="#">Item2</a>
-                  <a class="dropdown-item" href="#">Item3</a>
-                </div>
-              </div>
+                <h5>Order Items</h5>
+                <table class="table table-bordered" id="items_table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>
+                                <button type="button" class="btn btn-sm btn-primary" id="add_item">
+                                    <i class="fa fa-plus"></i> Add Item
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select name="product_id[]" class="form-control product-select" style="width:100%;">
+                                    <option></option>
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td><input type="number" name="quantity[]" class="form-control" min="1" value="1"></td>
+                            <td><button type="button" class="btn btn-sm btn-danger remove-item"><i class="fa fa-trash"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <button type="submit" class="btn btn-success">
             <i class="fa-solid fa-floppy-disk"></i>
@@ -80,4 +80,29 @@
         </form>
     </div>
 </div>
+<script>
+$(document).ready(function(){
+    function initProductSelect(row){
+        row.find('.product-select').select2({
+            placeholder: 'Select a product',
+            allowClear: true,
+            width: 'resolve'
+        });
+    }
+    // initialize select2 on first row
+    initProductSelect($('#items_table tbody tr').first());
+    $('#add_item').click(function(){
+        var row = $('#items_table tbody tr:first').clone();
+        row.find('select').val(null);
+        row.find('input').val(1);
+        $('#items_table tbody').append(row);
+        initProductSelect(row);
+    });
+    $(document).on('click','.remove-item',function(){
+        if ($('#items_table tbody tr').length > 1) {
+            $(this).closest('tr').remove();
+        }
+    });
+});
+</script>
 @endsection

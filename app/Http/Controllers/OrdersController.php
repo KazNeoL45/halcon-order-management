@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Client;
+use App\Models\Products;
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
@@ -23,7 +24,8 @@ class OrdersController extends Controller
     public function create()
     {
         $clients = Client::all();
-        return view('orders.create', compact('clients'));
+        $products = Products::all();
+        return view('orders.create', compact('clients', 'products'));
     }
 
     /**
@@ -31,7 +33,29 @@ class OrdersController extends Controller
      */
     public function store(Request $request)
     {
-        Order::create($request->all());
+        // Validate order and items
+        $request->validate([
+            'client_id'    => 'required|exists:clients,id',
+            'status'       => 'required|string|max:255',
+            'total'        => 'required|numeric',
+            'product_id'   => 'required|array|min:1',
+            'product_id.*' => 'required|exists:products,id',
+            'quantity'     => 'required|array|min:1',
+            'quantity.*'   => 'required|integer|min:1',
+        ]);
+        // Create order
+        $order = Order::create($request->only(['client_id', 'status', 'total']));
+        // Attach items
+        foreach ($request->input('product_id') as $idx => $productId) {
+            $qty = $request->input('quantity')[$idx] ?? 1;
+            $product = Products::find($productId);
+            $subtotal = $product->price * $qty;
+            $order->items()->create([
+                'product_id' => $productId,
+                'quantity'   => $qty,
+                'subtotal'   => $subtotal,
+            ]);
+        }
         return redirect()->route('orders.index')->with('success', 'Order created successfully.');
     }
 
