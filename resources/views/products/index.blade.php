@@ -1,8 +1,8 @@
-@extends('products.layout')
+@extends('layouts.app')
 
 @section('content')
 
-<div class="card mt-5">
+<div class="card mt-1 max-w-7xl mx-auto">
     <h2 class="card-header">Halcon Product Managment</h2>
     <div class="card-body">
         @if(session('success'))
