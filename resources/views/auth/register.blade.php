@@ -8,9 +8,15 @@
         @csrf
         <!-- Name -->
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <x-input-label for="name" :value="__('First Name')" />
+            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="given-name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        </div>
+        <!-- Second Name -->
+        <div class="mt-4">
+            <x-input-label for="second_name" :value="__('Second Name')" />
+            <x-text-input id="second_name" class="block mt-1 w-full" type="text" name="second_name" :value="old('second_name')" required autocomplete="family-name" />
+            <x-input-error :messages="$errors->get('second_name')" class="mt-2" />
         </div>
 
         <!-- Email Address -->
