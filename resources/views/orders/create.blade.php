@@ -55,7 +55,7 @@
                 <textarea name="notes" id="notes" class="form-control" rows="2">{{ old('notes') }}</textarea>
             </div>
                 </div>
-                <div class="flex-fill ps-3">
+                <div class="flex-fill pt-3">
                     <h5>Address Information</h5>
             <!-- Address Fields -->
             <div class="row mb-3">
