@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use Illuminate\Http\Request; // Asegúrate de que Request está importado
+use Illuminate\Http\Request; 
 
 class OrdersController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) // Inyecta Request para acceder a los parámetros de la URL
+    public function index(Request $request) 
     {
-        // Inicia la consulta base
+
         $query = Order::query();
 
         if ($request->has('invoice_number') && $request->input('invoice_number') != '') {
@@ -86,9 +86,6 @@ class OrdersController extends Controller
      */
     public function edit(Order $order)
     {
-        // Podrías necesitar pasar una lista de clientes aquí también
-        // $clients = \App\Models\Client::all();
-        // return view('orders.edit', compact('order', 'clients'));
         $order->load('client');
         return view('orders.edit', compact('order'));
     }
@@ -96,23 +93,16 @@ class OrdersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $order) // Cambiado $orders a $order para consistencia
+    public function update(Request $request, Order $order) 
     {
         $request->validate([
-            // Estas reglas de validación parecen ser para 'order_items' o algo similar, no para la orden en sí.
-            // Ajusta estas validaciones según los campos que realmente estés actualizando en la orden.
-            // Por ejemplo, si actualizas el status o el total:
             'client_id' => 'sometimes|required|exists:clients,id',
             'status' => 'sometimes|required|string|max:255',
             'total' => 'sometimes|required|numeric|min:0',
             'items' => 'nullable|string',
-            // Si estas son las validaciones correctas, asegúrate que tu formulario 'edit' tenga estos campos.
-            // 'product_id' => 'required|exists:products,id',
-            // 'user_id' => 'required|exists:users,id', // ¿Estás seguro que una orden tiene user_id y product_id directamente?
-            // 'quantity' => 'required|integer|min:1',
         ]);
 
-        $order->update($request->all()); // Asegúrate de que los campos en $request->all() sean fillable en tu modelo Order.
+        $order->update($request->all()); 
         return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
     }
 
