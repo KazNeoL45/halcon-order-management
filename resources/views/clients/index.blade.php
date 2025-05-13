@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="card mt-5">
+<div class="card mt-1 max-w-7xl mx-auto">
     <h2 class="card-header">Clients</h2>
     <div class="card-body">
         @if(session('success'))
@@ -15,7 +15,7 @@
             </a>
         </div>
 
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped mt-2">
             <thead>
                 <tr>
                     <th>ID</th>

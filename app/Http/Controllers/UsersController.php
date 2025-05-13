@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -12,7 +13,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::with('role')->get();
         return view('users.index', compact('users'));
     }
 
@@ -21,7 +22,8 @@ class UsersController extends Controller
      */
     public function create()
     {
-        return view('users.create');
+        $roles = Role::all();
+        return view('users.create', compact('roles'));
     }
 
     /**
@@ -43,40 +45,41 @@ class UsersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $users)
+    public function show(User $user)
     {
-        return view('users.show', compact('users'));
+        return view('users.show', compact('user'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $users)
+    public function edit(User $user)
     {
-        return view('users.edit', compact('users'));
+        $roles = Role::all();
+        return view('users.edit', compact('user', 'roles'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $users)
+    public function update(Request $request, User $user)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $users->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $users->update($request->all());
+        $user->update($request->all());
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $users)
+    public function destroy(User $user)
     {
-        $users->delete();
+        $user->delete();
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 }

@@ -9,24 +9,39 @@ use App\Models\Address;
 use App\Models\Country;
 use App\Models\State;
 use Illuminate\Http\Request;
+use Carbon\Carbon; // Import Carbon
 
 class OrdersController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::orderBy('created_at', 'desc')->paginate(10);
-        return view('orders.index', compact('orders'));
+        $query = Order::with('client')->orderBy('created_at', 'desc');
+
+        if ($request->filled('invoice_number_filter')) {
+            $query->where('invoice_number', 'like', '%' . $request->input('invoice_number_filter') . '%');
+        }
+        if ($request->filled('client_id_filter')) {
+            $query->where('client_id', $request->input('client_id_filter'));
+        }
+        if ($request->filled('date_filter')) {
+            $query->whereDate('invoice_date', $request->input('date_filter'));
+        }
+        if ($request->filled('status_filter')) {
+            $query->where('status', $request->input('status_filter'));
+        }
+
+        $orders = $query->paginate(10)->appends($request->except('page'));
+        $clients = Client::orderBy('name')->get();
+        $statuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+
+        return view('orders.index', compact('orders', 'clients', 'statuses', 'request'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //$clients = Client::with('address')->get();
         $clients = Client::all();
         $products = Products::all();
         // determine next invoice number
@@ -37,9 +52,6 @@ class OrdersController extends Controller
         return view('orders.create', compact('clients', 'products', 'nextInvoice', 'countries', 'states'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         // Validate order, invoice, address, and items
@@ -74,26 +86,23 @@ class OrdersController extends Controller
         foreach ($request->input('product_id') as $idx => $productId) {
             $qty = $request->input('quantity')[$idx] ?? 1;
             $product = Products::find($productId);
-            $order->items()->create([
-                'product_id' => $productId,
-                'quantity'   => $qty,
-                'subtotal'   => $product->price * $qty,
-            ]);
+            if ($product) {
+                $order->items()->create([
+                    'product_id' => $productId,
+                    'quantity'   => $qty,
+                    'subtotal'   => $product->price * $qty,
+                ]);
+            }
         }
         return redirect()->route('orders.index')->with('success', 'Order created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Order $order)
     {
+        $order->load('client', 'items.product');
         return view('orders.show', compact('order'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Order $order)
     {
         $clients = Client::all();
@@ -163,11 +172,53 @@ class OrdersController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage. (Soft Delete)
      */
     public function destroy(Order $order)
     {
+        // The SoftDeletes trait handles changing delete() to a soft delete.
+        // Related items (OrderItems) are not automatically soft-deleted.
+        // If you want to soft-delete OrderItems too, they would need the SoftDeletes trait
+        // and you might do it here or via model events.
+        // For now, we only soft-delete the order itself.
         $order->delete();
-        return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
+        return redirect()->route('orders.index')->with('success', 'Order marked as deleted successfully.');
+    }
+
+    /**
+     * Display a listing of the soft-deleted resources.
+     */
+    public function deletedOrders(Request $request)
+    {
+        $query = Order::onlyTrashed()->with('client')->orderBy('deleted_at', 'desc');
+
+        // Optional: Add filters for the deleted orders view
+        if ($request->filled('invoice_number_filter')) {
+            $query->where('invoice_number', 'like', '%' . $request->input('invoice_number_filter') . '%');
+        }
+        // Add other filters if needed
+
+        $deletedOrders = $query->paginate(10)->appends($request->except('page'));
+        // You might want to pass clients and statuses if you implement full filtering on this page
+        // $clients = Client::orderBy('name')->get();
+        // $statuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+
+        return view('orders.deleted', compact('deletedOrders', 'request'));
+    }
+
+    /**
+     * Restore the specified soft-deleted resource.
+     */
+    public function restore($id)
+    {
+        $order = Order::onlyTrashed()->findOrFail($id);
+        $order->restore();
+
+        // Optional: Restore related OrderItems if they were also soft-deleted
+        // if (method_exists($order, 'items')) {
+        //    $order->items()->onlyTrashed()->restore();
+        // }
+
+        return redirect()->route('orders.deleted')->with('success', 'Order restored successfully.');
     }
 }

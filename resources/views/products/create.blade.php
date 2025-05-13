@@ -13,7 +13,7 @@
         <form action="{{ route('products.store') }}" method="POST">
             @csrf
             <div class="mb-3 d-flex gap-3">
-              <div clas="d-flex flex-column flex-grow-1">
+              <div class="d-flex flex-column flex-grow-1">
                 <label for="inputName" class="form-label"><strong>Product name:</strong></label>
                   <input
                     type="text"
@@ -22,7 +22,7 @@
                     id="inputName"
                     placeholder="Name">
                 </div>
-              <div clas="d-flex flex-column flex-grow-1">
+              <div class="d-flex flex-column flex-grow-1">
                 <label for="inputName" class="form-label"><strong>Price:</strong></label>
                 <input
                     type="number"
@@ -31,7 +31,7 @@
                     id="inputPrice"
                     placeholder="Price">
                 </div>
-              <div clas="d-flex flex-column flex-grow-1">
+              <div class="d-flex flex-column flex-grow-1">
                 <label for="inputName" class="form-label"><strong>Initial Stock:</strong></label>
                 <input
                     type="number"

@@ -5,7 +5,7 @@
 <div class="card mt-5 max-w-7xl" x-data="orderForm()">
     <h2 class="card-header">Edit Order: {{ $order->invoice_number }}</h2>
     <div class="card-body">
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
             <a class="btn btn-primary btn-sm" href="{{ route('orders.index') }}"><i class="fa fa-arrow-left"></i> Back</a>
         </div>
 <form action="{{ route('orders.update', $order->id) }}" method="POST">
