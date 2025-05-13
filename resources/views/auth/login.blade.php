@@ -2,6 +2,11 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    <!-- Title -->
+    <div class="mb-4 text-center">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">{{ __('Login to your account') }}</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('Enter your credentials to access your account') }}</p>
+    </div>
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
@@ -43,5 +48,13 @@
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
+        <!-- Register Link -->
+        @if (Route::has('register'))
+            <div class="mt-4 text-center">
+                <a href="{{ route('register') }}" class="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300">
+                    {{ __('Don\'t have an account? Register') }}
+                </a>
+            </div>
+        @endif
     </form>
 </x-guest-layout>

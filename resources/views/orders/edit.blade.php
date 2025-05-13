@@ -3,91 +3,64 @@
 @section('content')
 
 <div class="card mt-5">
-    <h2 class="card-header">Create a new Order</h2>
+    <h2 class="card-header">Edit Orders</h2>
     <div class="card-body">
-        <div class="d-grid gap-2 d-md-flex
-        justify-content-md-end">
-            <a class="btn btn-primary btn-sm"
-            href="{{ route('orders.index') }}">
-            <i class="fa fa-arrow-left"></i>Back</a>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a class="btn btn-primary btn-sm" href="{{ route('orders.index') }}"><i class="fa fa-arrow-left"></i> Back</a>
         </div>
-
-        <form action="{{ route('orders.store') }}"
-        method="POST">
+        <form action="{{ route('orders.update',$order->id) }}" method="POST">
             @csrf
+            @method('PUT')
             <div class="mb-3 d-flex gap-3">
               <div clas="d-flex flex-column flex-grow-1">
-                <label for="inputName" class="form-label">
-                <strong>ClientId:</strong></label>
+                <label for="inputName" class="form-label"><strong>order name:</strong></label>
                   <input
                     type="text"
-                    name="client_id"
+                    name="name"
                     class="form-control"
-                    value="{{$order ->client_id}}"
-                    id="inputClient"
+                    value="{{ $order->name }}"
+                    id="inputName"
                     placeholder="Name">
                 </div>
               <div clas="d-flex flex-column flex-grow-1">
-                <label for="inputName" class="form-label">
-                <strong>Status:</strong></label>
+                <label for="inputName" class="form-label"><strong>Price:</strong></label>
                 <input
-                    type="text"
-                    name="status"
-                    value="{{$order ->status}}"
+                    type="number"
+                    name="price"
                     class="form-control"
-                    id="inputStatus"
-                    placeholder="Status">
-              </div>
+                    value="{{ $order->price }}"
+                    id="inputPrice"
+                    placeholder="Price">
+                </div>
               <div clas="d-flex flex-column flex-grow-1">
-                <label for="inputName" class="form-label">
-                <strong>Total:</strong></label>
+                <label for="inputName" class="form-label"><strong>Initial Stock:</strong></label>
                 <input
-                    type="text"
-                    name="total"
-                    value="{{$order ->total}}"
+                    type="number"
+                    name="stock"
                     class="form-control"
-                    id="Inputtotal"
-                    placeholder="Total">
-              </div>
-              <div clas="d-flex flex-column flex-grow-1">
-                <label for="inputName" class="form-label"><strong>
-                    Items
-                </strong>
-                </label>
-                <input
-                    type="text"
-                    name="items"
-                    value="{{$order ->items}}"
-                    class="form-control"
-                    id="Inputitems"
-                    placeholder="Fill with items">
-              </div>
+                    value="{{ $order->stock }}"
+                    id="inputPrice"
+                    placeholder="Initial Stock">
+                </div>
             </div>
 
             <div class="mb-3">
-              <div class="dropdown">
-                <button
-                    class="btn btn-secondary dropdown-toggle"
-                    type="button"
-                    id="dropdownMenuButton"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                >
-                  List order items
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="#">Item1</a>
-                  <a class="dropdown-item" href="#">Item2</a>
-                  <a class="dropdown-item" href="#">Item3</a>
-                </div>
-              </div>
+                <label for="inputcontent" class="form-label"><strong>Description:</strong></label>
+                <textarea
+                    class="form-control @error('content') is-invalid @enderror"
+                    style="height:150px"
+                    name="description"
+                    id="inputcontent"
+                    placeholder="Hi-Fi Music Reproducer"></textarea>
+                @error('content')
+                    <div class="form-text text-danger">{{ $message }}</div>
+                @enderror
             </div>
-            <button type="submit" class="btn btn-success">
-            <i class="fa-solid fa-floppy-disk"></i>
-                Submit
-            </button>
+
+
+            <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Update</button>
         </form>
+
     </div>
 </div>
 @endsection
