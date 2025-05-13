@@ -22,10 +22,12 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->get();
 
+        // Orders grouped by state/region
         $ordersByRegion = DB::table('orders')
             ->join('addresses', 'orders.address_id', '=', 'addresses.id')
-            ->select('addresses.state as region', DB::raw('count(orders.id) as count'))
-            ->groupBy('addresses.state')
+            ->join('states', 'addresses.state_id', '=', 'states.id')
+            ->select('states.name as region', DB::raw('count(orders.id) as count'))
+            ->groupBy('states.name')
             ->orderByDesc('count')
             ->get();
 

@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-group">
                     <strong>Client:</strong> <br/>
@@ -35,6 +35,24 @@
                 </div>
             </div>
         </div>
+        @if($order->address)
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <strong>Delivery Address:</strong>
+                    <div class="border p-3 rounded mt-2 bg-light">
+                        <address class="mb-0">
+                            <i class="fa fa-map-marker-alt text-primary me-2"></i>
+                            {{ $order->address->street }} {{ $order->address->external_number }}<br>
+                            {{ $order->address->colony }}<br>
+                            {{ $order->address->city }}, {{ $order->address->state->name }} {{ $order->address->zip_code }}<br>
+                            {{ $order->address->country->name }}
+                        </address>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
 
         <div class="row mt-4">
             <div class="col-md-6">

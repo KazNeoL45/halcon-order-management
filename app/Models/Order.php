@@ -73,12 +73,8 @@ class Order extends Model
         return $this->hasOne(Payment::class);
     }
 
-    /**
-     * Get the address associated with the order.
-     * Added HasOne return type hint for consistency.
-     */
-    public function address(): HasOne
+    public function address(): BelongsTo
     {
-        return $this->hasOne(Address::class); 
+        return $this->belongsTo(Address::class);
     }
 }

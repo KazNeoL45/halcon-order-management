@@ -20,6 +20,9 @@
         @endif
         <form action="{{ route('orders.store') }}" method="POST">
             @csrf
+            <div class="d-flex flex-wrap mb-4">
+                <div class="flex-fill pe-3">
+                    <h5>Purchase Details</h5>
             <!-- Invoice & Order Details -->
             <div class="row mb-3">
                 <div class="col-md-3">
@@ -35,26 +38,71 @@
                     <input type="text" name="total" id="total" class="form-control" x-bind:value="total.toFixed(2)" readonly placeholder="0.00">
                 </div>
             </div>
-            <!-- Client & Delivery -->
+            <!-- Client -->
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="client_id" class="form-label"><strong>Client</strong></label>
                     <select name="client_id" id="client_id" class="form-control">
                         <option value="" disabled selected>Select a client</option>
                         @foreach($clients as $client)
-                            <option value="{{ $client->id }}">{{ $client->name }}</option>
+                            <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>{{ $client->name }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-6">
-                    <label for="delivery_address" class="form-label"><strong>Delivery Address</strong></label>
-                    <textarea name="delivery_address" id="delivery_address" class="form-control" rows="2">{{ old('delivery_address') }}</textarea>
-                </div>
             </div>
-            <!-- Additional Notes -->
             <div class="mb-3">
                 <label for="notes" class="form-label"><strong>Notes</strong></label>
                 <textarea name="notes" id="notes" class="form-control" rows="2">{{ old('notes') }}</textarea>
+            </div>
+                </div>
+                <div class="flex-fill ps-3">
+                    <h5>Address Information</h5>
+            <!-- Address Fields -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="street" class="form-label"><strong>Street</strong></label>
+                    <input type="text" name="street" id="street" class="form-control" value="{{ old('street') }}">
+                </div>
+                <div class="col-md-6">
+                    <label for="external_number" class="form-label"><strong>External Number</strong></label>
+                    <input type="text" name="external_number" id="external_number" class="form-control" value="{{ old('external_number') }}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="colony" class="form-label"><strong>Colony</strong></label>
+                    <input type="text" name="colony" id="colony" class="form-control" value="{{ old('colony') }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="city" class="form-label"><strong>City</strong></label>
+                    <input type="text" name="city" id="city" class="form-control" value="{{ old('city') }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="state_id" class="form-label"><strong>State</strong></label>
+                    <select name="state_id" id="state_id" class="form-control">
+                        <option value="" disabled selected>Select a state</option>
+                        @foreach($states as $state)
+                            <option value="{{ $state->id }}" {{ old('state_id') == $state->id ? 'selected' : '' }}>{{ $state->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="zip_code" class="form-label"><strong>Zip Code</strong></label>
+                    <input type="text" name="zip_code" id="zip_code" class="form-control" value="{{ old('zip_code') }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="country_id" class="form-label"><strong>Country</strong></label>
+                    <select name="country_id" id="country_id" class="form-control">
+                        <option value="" disabled selected>Select a country</option>
+                        @foreach($countries as $country)
+                            <option value="{{ $country->id }}" {{ old('country_id') == $country->id ? 'selected' : '' }}>{{ $country->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+                </div>
             </div>
             <!-- Order items component -->
             <div class="mb-3">

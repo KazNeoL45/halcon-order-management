@@ -3,23 +3,42 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Address extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'order_id',
         'street',
         'external_number',
+        'colony',
         'city',
-        'state',
+        'state_id',
         'zip_code',
-        'country'
+        'country_id',
     ];
 
-    public function order()
+    /**
+     * Get the orders that use this address.
+     */
+    public function orders(): HasMany
     {
-        return $this->belongsTo(Order::class);
+        return $this->hasMany(Order::class, 'address_id');
+    }
+    /**
+     * Get the state for the address.
+     */
+    public function state(): BelongsTo
+    {
+        return $this->belongsTo(State::class);
+    }
+    /**
+     * Get the country for the address.
+     */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
     }
 }

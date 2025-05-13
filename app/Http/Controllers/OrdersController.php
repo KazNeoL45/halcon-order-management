@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Client;
 use App\Models\Products;
+use App\Models\Address;
+use App\Models\Country;
+use App\Models\State;
 use Illuminate\Http\Request;
 use Carbon\Carbon; // Import Carbon
 
@@ -41,38 +44,45 @@ class OrdersController extends Controller
     {
         $clients = Client::all();
         $products = Products::all();
-        $lastOrder = Order::orderBy('id', 'desc')->first(); // More reliable way to get last order
-        $nextInvoiceNumber = $lastOrder ? ((int)preg_replace('/[^0-9]/', '', $lastOrder->invoice_number) + 1) : 1;
-        // Format your invoice number as needed, e.g., INV-001
-        $nextInvoice = 'INV-' . str_pad($nextInvoiceNumber, 3, '0', STR_PAD_LEFT);
-
-
-        return view('orders.create', compact('clients', 'products', 'nextInvoice'));
+        // determine next invoice number
+        $last = Order::max('invoice_number');
+        $nextInvoice = $last ? ((int)$last + 1) : 1;
+        $countries = Country::all();
+        $states = State::all();
+        return view('orders.create', compact('clients', 'products', 'nextInvoice', 'countries', 'states'));
     }
 
     public function store(Request $request)
     {
+        // Validate order, invoice, address, and items
         $request->validate([
-            'client_id'      => 'required|exists:clients,id',
-            'invoice_number' => 'required|unique:orders,invoice_number',
-            'invoice_date'   => 'required|date',
-            'status'         => 'required|string|in:pending,paid,shipped,delivered,cancelled',
-            'total'          => 'required|numeric',
-            'delivery_address' => 'nullable|string',
-            'notes'          => 'nullable|string',
-            'product_id'     => 'required|array|min:1',
-            'product_id.*'   => 'required|exists:products,id',
-            'quantity'       => 'required|array|min:1',
-            'quantity.*'     => 'required|integer|min:1',
+            'client_id'       => 'required|exists:clients,id',
+            'invoice_number'  => 'required|unique:orders,invoice_number',
+            'invoice_date'    => 'required|date',
+            'total'           => 'required|numeric',
+            'notes'           => 'nullable|string',
+            'street'          => 'required|string',
+            'external_number' => 'required|string',
+            'colony'          => 'required|string',
+            'city'            => 'required|string',
+            'state_id'        => 'required|exists:states,id',
+            'zip_code'        => 'required|string',
+            'country_id'      => 'required|exists:countries,id',
+            'product_id'      => 'required|array|min:1',
+            'product_id.*'    => 'required|exists:products,id',
+            'quantity'        => 'required|array|min:1',
+            'quantity.*'      => 'required|integer|min:1',
         ]);
-
-        $orderData = $request->only([
-            'client_id', 'invoice_number', 'invoice_date', 'status', 'total', 'delivery_address', 'notes'
-        ]);
-        $orderData['invoice_date'] = Carbon::parse($request->invoice_date); // Ensure correct date format
-
-        $order = Order::create($orderData);
-
+        // Create address record
+        $address = Address::create($request->only([
+            'street', 'external_number', 'colony', 'city', 'state_id', 'zip_code', 'country_id',
+        ]));
+        // Create order record
+        $order = Order::create(array_merge(
+            $request->only(['client_id', 'invoice_number', 'invoice_date', 'status', 'total', 'notes']),
+            ['address_id' => $address->id]
+        ));
+        // Attach each item to order
         foreach ($request->input('product_id') as $idx => $productId) {
             $qty = $request->input('quantity')[$idx] ?? 1;
             $product = Products::find($productId);
@@ -96,34 +106,67 @@ class OrdersController extends Controller
     public function edit(Order $order)
     {
         $clients = Client::all();
-        $products = Products::all(); // If needed for item editing
-        $statuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
-        $order->load('items');
-        return view('orders.edit', compact('order', 'clients', 'products', 'statuses'));
+        $products = Products::all();
+        $countries = Country::all();
+        $states = State::all();
+        return view('orders.edit', compact('order', 'clients', 'products', 'countries', 'states'));
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, Order $order)
     {
+        // Validate order, address, and items (invoice_number unique except current)
         $request->validate([
-            'client_id'      => 'sometimes|required|exists:clients,id',
-            'invoice_number' => 'sometimes|required|unique:orders,invoice_number,' . $order->id,
-            'invoice_date'   => 'sometimes|required|date',
-            'status'         => 'sometimes|required|string|in:pending,paid,shipped,delivered,cancelled',
-            'total'          => 'sometimes|required|numeric',
-            'delivery_address' => 'nullable|string',
-            'notes'          => 'nullable|string',
-            // Add validation for items if they are editable
+            'client_id'       => 'required|exists:clients,id',
+            'invoice_number'  => 'required|unique:orders,invoice_number,' . $order->id,
+            'invoice_date'    => 'required|date',
+            'total'           => 'required|numeric',
+            'notes'           => 'nullable|string',
+            'street'          => 'required|string',
+            'external_number' => 'required|string',
+            'colony'          => 'required|string',
+            'city'            => 'required|string',
+            'state_id'        => 'required|exists:states,id',
+            'zip_code'        => 'required|string',
+            'country_id'      => 'required|exists:countries,id',
+            'product_id'      => 'required|array|min:1',
+            'product_id.*'    => 'required|exists:products,id',
+            'quantity'        => 'required|array|min:1',
+            'quantity.*'      => 'required|integer|min:1',
         ]);
 
-        $updateData = $request->only([
-             'client_id', 'invoice_number', 'invoice_date', 'status', 'total', 'delivery_address', 'notes'
+        // Update or create address
+        $addrData = $request->only([
+            'street', 'external_number', 'colony', 'city', 'state_id', 'zip_code', 'country_id',
         ]);
-        if($request->has('invoice_date')) {
-            $updateData['invoice_date'] = Carbon::parse($request->invoice_date);
+        if ($order->address) {
+            $order->address->update($addrData);
+        } else {
+            $address = Address::create($addrData);
+            $order->address_id = $address->id;
         }
 
-        $order->update($updateData);
-        // Logic for updating order items would go here if applicable
+        // Update order fields
+        $order->update($request->only([
+            'client_id', 'invoice_number', 'invoice_date', 'total', 'notes'
+        ]));
+
+        // Sync items: remove existing and re-add
+        $order->items()->delete();
+        foreach ($request->input('product_id') as $idx => $productId) {
+            $qty = $request->input('quantity')[$idx] ?? 1;
+            $product = Products::find($productId);
+            $order->items()->create([
+                'product_id' => $productId,
+                'quantity'   => $qty,
+                'subtotal'   => $product->price * $qty,
+            ]);
+        }
+
+        // Save in case address_id was set
+        $order->save();
 
         return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
     }
