@@ -1,6 +1,7 @@
-@extends('clients.layout')
+@extends('layouts.app')
 
 @section('content')
+
 <div class="card mt-5">
     <h2 class="card-header">Clients</h2>
     <div class="card-body">

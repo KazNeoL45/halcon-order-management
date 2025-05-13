@@ -36,6 +36,10 @@
                         :active="request()->routeIs('products.*')">
                             {{ __('Products') }}
                         </x-responsive-nav-link>
+                        <x-responsive-nav-link class="text-black" :href="route('clients.index')"
+                        :active="request()->routeIs('clients.*')">
+                            {{ __('Clients') }}
+                        </x-responsive-nav-link>
                     </nav>
                 </aside>
 
