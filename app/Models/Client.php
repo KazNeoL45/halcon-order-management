@@ -13,7 +13,8 @@ class Client extends Model
     protected $fillable = [
         'name',
         'email',
-        'address_id',
+        'phone',
+        'tax_information',
     ];
 
     public function roles(): BelongsToMany

@@ -20,6 +20,8 @@ class OrderFactory extends Factory
         return [
             'client_id' => Client::factory(),
             'status' => fake()->randomElement(['pending', 'shipped', 'delivered']),
+            'invoice_number' => fake()->unique()->randomNumber(8),
+            'invoice_date' => fake()->dateTime(),
             'total' => 0
         ];
     }

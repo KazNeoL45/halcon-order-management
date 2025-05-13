@@ -12,25 +12,51 @@
 
         <form action="{{ route('orders.store') }}" method="POST">
             @csrf
-            <div class="mb-3 d-flex gap-3">
-              <div class="d-flex flex-column flex-grow-1">
-                <label for="client_id" class="form-label"><strong>Client:</strong></label>
-                <select name="client_id" id="client_id" class="form-control">
-                  <option value="" disabled selected>Select a client</option>
-                  @foreach($clients as $client)
-                    <option value="{{ $client->id }}">{{ $client->name }}</option>
-                  @endforeach
-                </select>
-              </div>
-              <div class="d-flex flex-column flex-grow-1">
-                <label for="inputName" class="form-label"><strong>Total:</strong></label>
-                <input
-                    type="text"
-                    name="total"
-                    class="form-control"
-                    id="Inputtotal"
-                    placeholder="Total">
-              </div>
+            <!-- Invoice & Order Details -->
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="invoice_number" class="form-label"><strong>Invoice Number</strong></label>
+                    <input type="text" name="invoice_number" id="invoice_number" class="form-control" value="{{ old('invoice_number', $nextInvoice) }}" readonly>
+                </div>
+                <div class="col-md-3">
+                    <label for="invoice_date" class="form-label"><strong>Date & Time</strong></label>
+                    <input type="datetime-local" name="invoice_date" id="invoice_date" class="form-control" value="{{ old('invoice_date', now()->format('Y-m-d\TH:i')) }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="status" class="form-label"><strong>Status</strong></label>
+                    <input type="text" name="status" id="status" class="form-control" value="{{ old('status', 'pending') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="total" class="form-label"><strong>Total</strong></label>
+                    <input type="text" name="total" id="total" class="form-control" readonly placeholder="0.00">
+                </div>
+            </div>
+            <!-- Client & Delivery -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="client_id" class="form-label"><strong>Client</strong></label>
+                    <select name="client_id" id="client_id" class="form-control">
+                        <option value="" disabled selected>Select a client</option>
+                        @foreach($clients as $client)
+                            <option value="{{ $client->id }}">{{ $client->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="delivery_address" class="form-label"><strong>Delivery Address</strong></label>
+                    <textarea name="delivery_address" id="delivery_address" class="form-control" rows="2">{{ old('delivery_address') }}</textarea>
+                </div>
+            </div>
+            <!-- Client Info Preview -->
+            <div id="client_info" class="mb-3">
+                <div><strong>Client Name/Company:</strong> <span id="client_name_display"></span></div>
+                <div><strong>Client Number:</strong> <span id="client_number_display"></span></div>
+                <div><strong>Tax Information:</strong> <span id="tax_info_display"></span></div>
+            </div>
+            <!-- Additional Notes -->
+            <div class="mb-3">
+                <label for="notes" class="form-label"><strong>Notes</strong></label>
+                <textarea name="notes" id="notes" class="form-control" rows="2">{{ old('notes') }}</textarea>
             </div>
             <!-- Order items component -->
             <div class="mb-3">
@@ -69,9 +95,8 @@
             </button>
         </form>
     </div>
-</div>
+    </div>
 <script>
-    // Assumes $products is available and each product has 'id' and 'price'
     var productsData = {
         @foreach($products as $product)
             "{{ $product->id }}": {{ $product->price ?? 0 }},
