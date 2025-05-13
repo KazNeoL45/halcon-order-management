@@ -14,8 +14,16 @@ class Order extends Model
 
     protected $fillable = [
         'client_id',
+        'invoice_number',
+        'invoice_date',
         'status',
-        'total'
+        'total',
+        'delivery_address',
+        'notes',
+    ];
+
+    protected $attributes = [
+        'status' => 'ordered',
     ];
 
     public function client(): BelongsTo
