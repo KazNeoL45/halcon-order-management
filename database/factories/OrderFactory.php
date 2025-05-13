@@ -25,4 +25,17 @@ class OrderFactory extends Factory
             'total' => 0
         ];
     }
+    /**
+     * After creating an order, generate items and recalculate total.
+     */
+    public function configure(): self
+    {
+        return $this->afterCreating(function (\App\Models\Order $order) {
+            $items = \App\Models\OrderItem::factory(rand(2, 6))->create([
+                'order_id' => $order->id,
+            ]);
+            $subtotal = $items->sum('subtotal');
+            $order->update(['total' => $subtotal]);
+        });
+    }
 }
