@@ -70,6 +70,7 @@
                 @endforelse
             </tbody>
         </table>
+        {{ $orders->links() }}
     </div>
 </div>
 @endsection
