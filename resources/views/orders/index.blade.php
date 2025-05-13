@@ -96,8 +96,12 @@
                                 href="{{ route('orders.show',$order->id) }}">
                                 <i class="fa-solid fa-list"></i> Show</a>
                                 <a class="btn btn-primary btn-sm me-1"
-                                href="{{ route('orders.edit',$order->id) }}">
-                                <i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                                   href="{{ route('orders.edit',$order->id) }}">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                </a>
+                                <button type="button" class="btn btn-warning btn-sm me-1" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-transit')">
+                                    <i class="fa-solid fa-truck"></i> Mark as In Transit
+                                </button>
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this order?')">
@@ -113,6 +117,23 @@
                 @endforelse
             </tbody>
         </table>
+        {{-- Modals for marking orders as in transit --}}
+        @foreach ($orders as $order)
+            <x-modal name="mark-order-{{ $order->id }}-in-transit" focusable>
+                <form action="{{ route('orders.markInTransit', $order) }}" method="POST" enctype="multipart/form-data" class="p-6">
+                    @csrf
+                    <h2 class="text-lg font-medium text-gray-900">Mark Order #{{ $order->id }} as In Transit</h2>
+                    <div class="mt-4 mb-4">
+                        <label for="load_photo_{{ $order->id }}" class="form-label">Load Photo</label>
+                        <input type="file" class="form-control" id="load_photo_{{ $order->id }}" name="load_photo" required>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" class="btn btn-secondary btn-sm me-2" x-on:click="$dispatch('close')">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Mark as In Transit</button>
+                    </div>
+                </form>
+            </x-modal>
+        @endforeach
         <div class="mt-3">
             {{ $orders->links() }}
         </div>

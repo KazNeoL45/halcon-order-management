@@ -221,4 +221,24 @@ class OrdersController extends Controller
 
         return redirect()->route('orders.deleted')->with('success', 'Order restored successfully.');
     }
+    
+    /**
+     * Mark the specified order as in transit and upload load photo.
+     */
+    public function markInTransit(Request $request, Order $order)
+    {
+        $request->validate([
+            'load_photo' => 'required|image|max:2048',
+        ]);
+
+        if ($request->hasFile('load_photo')) {
+            $path = $request->file('load_photo')->store('load_photos', 'public');
+            $order->load_photo = $path;
+        }
+
+        $order->status = 'in route';
+        $order->save();
+
+        return redirect()->route('orders.index')->with('success', 'Order marked as in transit successfully.');
+    }
 }
