@@ -26,6 +26,7 @@ class UserFactory extends Factory
             'name' => "admin",
             'email' => "admin@gmail.com",
             'password' => "admin1234",
+            "role_id" => 1,
         ];
     }
 }

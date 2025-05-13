@@ -13,14 +13,9 @@ class Client extends Model
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'address_id',
     ];
-
-    public function roles(): BelongsToMany
-    {
-
-        return $this->belongsToMany(Role::class, 'client_role', 'client_id', 'role_id');
-    }
 
     public function address()
     {

@@ -39,6 +39,45 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <!-- Role -->
+        <div class="mt-4"
+        x-data="{ selectedRole: '', selectedRoleName: '{{ __('Select User Role') }}' }">
+            <x-input-label for="role" :value="__('Role')" />
+            <div class="relative w-full">
+                <x-dropdown class="w-full" align="left" width="100%">
+                    <x-slot name="trigger">
+                        <x-primary-button
+                        class="w-full justify-between"
+                        x-text="selectedRoleName"></x-primary-button>
+                    </x-slot>
+
+                    <x-slot name="content">
+                        <div class="w-full"
+                        style="width: 400px; max-height: 200px; overflow-y: auto;">
+                            @foreach ($roles as $role)
+                                <x-dropdown-link
+                                    href="#"
+                                    @click.prevent="
+                                        selectedRole = '{{ $role->id }}';
+                                        selectedRoleName = '{{ $role->name }}';
+                                    "
+                                >
+                                    {{ $role->name }}
+                                </x-dropdown-link>
+                            @endforeach
+                        </div>
+                    </x-slot>
+                </x-dropdown>
+            </div>
+
+            <!-- Hidden input to submit selected role -->
+            <input type="hidden" name="role" :value="selectedRole">
+
+            @error('role')
+                <x-input-error :messages="$message" class="mt-2" />
+            @enderror
+        </div>
+
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
