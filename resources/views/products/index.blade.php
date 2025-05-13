@@ -3,18 +3,18 @@
 @section('content')
 
 <div class="card mt-1 max-w-7xl mx-auto">
-    <h2 class="card-header">Halcon Product Managment</h2>
+    <h2 class="card-header">Products</h2>
     <div class="card-body">
         @if(session('success'))
             <div class="alert alert-success" role="alert">{{ session('success') }}</div>
         @endif
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
             <a class="btn btn-success btn-sm" href="{{ route('products.create') }}">
-            <i class="fa fa-plus"></i>Add New Product</a>
+            <i class="fa fa-plus"></i> Add New Product</a>
         </div>
 
-        <table class="table table-bordered table-striped mt-4">
+        <table class="table table-bordered table-striped mt-2">
             <thead>
                 <tr>
                     <th width="80px">Id</th>
@@ -22,6 +22,7 @@
                     <th>Price</th>
                     <th>Stock</th>
                     <th>Description</th>
+                    <th width="200px">Actions</th>
                 </tr>
             </thead>
 
@@ -53,7 +54,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4">There are no data.</td>
+                        <td colspan="6" class="text-center">No products found.</td>
                     </tr>
                 @endforelse
             </tbody>

@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="card mt-1 max-w-7xl mx-auto">
-    <h2 class="card-header">Halcon Managment - Orders</h2>
+    <h2 class="card-header">Orders</h2>
     <div class="card-body">
         @if(session('success'))
             <div class="alert alert-success" role="alert">{{ session('success') }}</div>
@@ -52,7 +52,7 @@
     </a>
 
             <a class="btn btn-success btn-sm" href="{{ route('orders.create') }}">
-            <i class="fa fa-plus"></i> Add New order</a>
+            <i class="fa fa-plus"></i> Add New Order</a>
         </div>
 
         <table class="table table-bordered table-striped mt-2">
@@ -64,7 +64,7 @@
                     <th>Invoice Date</th>
                     <th>Status</th>
                     <th>Total</th>
-                    <th width="230px">Actions</th>
+                    <th width="200px">Actions</th>
                 </tr>
             </thead>
             <tbody>
