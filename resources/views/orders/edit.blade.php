@@ -3,16 +3,25 @@
 @section('content')
 
 <div class="card mt-5">
-    <h2 class="card-header">Edit Orders</h2>
+    <h2 class="card-header">Edit Order</h2>
     <div class="card-body">
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
             <a class="btn btn-primary btn-sm" href="{{ route('orders.index') }}"><i class="fa fa-arrow-left"></i> Back</a>
         </div>
-        <form action="{{ route('orders.update',$order->id) }}" method="POST">
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form action="{{ route('orders.update', $order->id) }}" method="POST">
             @csrf
             @method('PUT')
-            <div class="mb-3 d-flex gap-3">
-              <div clas="d-flex flex-column flex-grow-1">
+<div class="mb-3 d-flex gap-3">
+              <div class="d-flex flex-column flex-grow-1">
                 <label for="inputName" class="form-label"><strong>order name:</strong></label>
                   <input
                     type="text"
@@ -22,7 +31,7 @@
                     id="inputName"
                     placeholder="Name">
                 </div>
-              <div clas="d-flex flex-column flex-grow-1">
+              <div class="d-flex flex-column flex-grow-1">
                 <label for="inputName" class="form-label"><strong>Price:</strong></label>
                 <input
                     type="number"
@@ -32,7 +41,7 @@
                     id="inputPrice"
                     placeholder="Price">
                 </div>
-              <div clas="d-flex flex-column flex-grow-1">
+              <div class="d-flex flex-column flex-grow-1">
                 <label for="inputName" class="form-label"><strong>Initial Stock:</strong></label>
                 <input
                     type="number"
