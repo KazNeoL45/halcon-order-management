@@ -11,9 +11,10 @@ Route::get('/', function () {
 
 Route::get('/api/order', [App\Http\Controllers\OrderApi::class, 'show']);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+use App\Http\Controllers\DashboardController;
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
