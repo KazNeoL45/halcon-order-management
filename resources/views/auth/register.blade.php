@@ -1,7 +1,11 @@
 <x-guest-layout>
+    <!-- Title -->
+    <div class="mb-4 text-center">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">{{ __('Create your account') }}</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('Please fill in the information below to create an account') }}</p>
+    </div>
     <form method="POST" action="{{ route('register') }}">
         @csrf
-
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
@@ -40,42 +44,15 @@
         </div>
 
         <!-- Role -->
-        <div class="mt-4"
-        x-data="{ selectedRole: '', selectedRoleName: '{{ __('Select User Role') }}' }">
-            <x-input-label for="role" :value="__('Role')" />
-            <div class="relative w-full">
-                <x-dropdown class="w-full" align="left" width="100%">
-                    <x-slot name="trigger">
-                        <x-primary-button
-                        class="w-full justify-between"
-                        x-text="selectedRoleName"></x-primary-button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <div class="w-full"
-                        style="width: 400px; max-height: 200px; overflow-y: auto;">
-                            @foreach ($roles as $role)
-                                <x-dropdown-link
-                                    href="#"
-                                    @click.prevent="
-                                        selectedRole = '{{ $role->id }}';
-                                        selectedRoleName = '{{ $role->name }}';
-                                    "
-                                >
-                                    {{ $role->name }}
-                                </x-dropdown-link>
-                            @endforeach
-                        </div>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <!-- Hidden input to submit selected role -->
-            <input type="hidden" name="role" :value="selectedRole">
-
-            @error('role')
-                <x-input-error :messages="$message" class="mt-2" />
-            @enderror
+        <div class="mt-4">
+            <x-input-label for="role_id" :value="__('Role')" />
+            <select id="role_id" name="role_id" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                <option value="">{{ __('Select User Role') }}</option>
+                @foreach ($roles as $role)
+                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('role_id')" class="mt-2" />
         </div>
 
         <div class="flex items-center justify-end mt-4">
