@@ -48,12 +48,10 @@
 
         @php $role = auth()->user()->role->name; @endphp
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
-            @if($role === 'Admin')
+            @if(in_array($role, ['Admin', 'Sales']))
                 <a class="btn btn-warning btn-sm" href="{{ route('orders.deleted') }}">
                     <i class="fa fa-trash-restore"></i> View Deleted Orders
                 </a>
-            @endif
-            @if(in_array($role, ['Admin', 'Sales']))
                 <a class="btn btn-success btn-sm" href="{{ route('orders.create') }}">
                     <i class="fa fa-plus"></i> Add New Order
                 </a>

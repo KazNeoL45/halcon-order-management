@@ -47,7 +47,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':Admin,Route'])->group(funct
 });
 
 // Delete and restore orders (Admin)
-Route::middleware(['auth', RoleMiddleware::class . ':Admin'])->group(function () {
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales'])->group(function () {
     Route::delete('/orders/{order}', [OrdersController::class, 'destroy'])->name('orders.destroy');
     Route::post('orders/{id}/restore', [OrdersController::class, 'restore'])->name('orders.restore');
     Route::get('orders/deleted-list', [OrdersController::class, 'deletedOrders'])->name('orders.deleted');
