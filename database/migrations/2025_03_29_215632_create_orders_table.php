@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('status')->default('pending');
+            $table->string('status')->default('ordered');
             $table->float('total')->default(0.00);
             $table->timestamps();
         });

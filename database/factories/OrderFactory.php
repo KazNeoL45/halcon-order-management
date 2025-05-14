@@ -19,7 +19,7 @@ class OrderFactory extends Factory
     {
         return [
             'client_id' => Client::factory(),
-            'status' => fake()->randomElement(['pending', 'shipped', 'delivered']),
+            'status' => fake()->randomElement(['ordered', 'in process', 'in route', 'delivered', 'cancelled']),
             'invoice_number' => fake()->unique()->randomNumber(8),
             'invoice_date' => fake()->dateTime(),
             'address_id' => \App\Models\Address::factory(),

@@ -3,48 +3,48 @@
 @section('content')
 
 <div class="card mt-1 max-w-7xl mx-auto">
-    <h2 class="card-header">Orders</h2>
+    <h2 class="card-header">Orders </h2>
     <div class="card-body">
         @if(session('success'))
             <div class="alert alert-success" role="alert">{{ session('success') }}</div>
         @endif
 
         <div class="mb-3">
-            <form method="GET" action="{{ route('orders.index') }}">
-                <div class="row g-2">
-                    <div class="col-md">
-                        <input type="text" name="invoice_number_filter" class="form-control form-control-sm" placeholder="Invoice Number" value="{{ $request->input('invoice_number_filter') }}">
-                    </div>
-                    <div class="col-md">
-                        <select name="client_id_filter" class="form-select form-select-sm">
-                            <option value="">All Clients</option>
-                            @foreach($clients as $client)
-                                <option value="{{ $client->id }}" {{ $request->input('client_id_filter') == $client->id ? 'selected' : '' }}>
-                                    {{ $client->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md">
-                        <input type="date" name="date_filter" class="form-control form-control-sm" value="{{ $request->input('date_filter') }}">
-                    </div>
-                    <div class="col-md">
-                        <select name="status_filter" class="form-select form-select-sm">
-                            <option value="">All Statuses</option>
-                            @foreach($statuses as $status)
-                                <option value="{{ $status }}" {{ $request->input('status_filter') == $status ? 'selected' : '' }}>
-                                    {{ ucfirst($status) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-auto">
-                        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
-                        <a href="{{ route('orders.index') }}" class="btn btn-secondary btn-sm">Clear</a>
-                    </div>
-                </div>
-            </form>
+    <form method="GET" action="{{ route('orders.index') }}">
+        <div class="row g-2">
+            <div class="col-md">
+                <input type="text" name="invoice_number_filter" class="form-control form-control-sm" placeholder="Invoice Number" value="{{ $request->input('invoice_number_filter') }}">
+            </div>
+            <div class="col-md">
+                <select name="client_id_filter" class="form-select form-select-sm">
+                    <option value="">All Clients</option>
+                    @foreach($clients as $client)
+                        <option value="{{ $client->id }}" {{ $request->input('client_id_filter') == $client->id ? 'selected' : '' }}>
+                            {{ $client->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md">
+                <input type="date" name="date_filter" class="form-control form-control-sm" value="{{ $request->input('date_filter') }}">
+            </div>
+            <div class="col-md">
+                <select name="status_filter" class="form-select form-select-sm">
+                    <option value="">All Statuses</option>
+                    <option value="ordered" {{ $request->input('status_filter') == 'ordered' ? 'selected' : '' }}>Ordered</option>
+                    <option value="in process" {{ $request->input('status_filter') == 'in process' ? 'selected' : '' }}>In Process</option>
+                    <option value="in route" {{ $request->input('status_filter') == 'in route' ? 'selected' : '' }}>In Route</option>
+                    <option value="delivered" {{ $request->input('status_filter') == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                    <option value="cancelled" {{ $request->input('status_filter') == 'cancelled' ? 'selected' : '' }}>cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-auto">
+                <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                <a href="{{ route('orders.index') }}" class="btn btn-secondary btn-sm">Clear</a>
+            </div>
         </div>
+    </form>
+</div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
                 <a class="btn btn-warning btn-sm" href="{{ route('orders.deleted') }}">
@@ -77,9 +77,9 @@
                         <td>
                             @php
                                 $statusClass = match($order->status) {
-                                    'pending'   => 'badge bg-warning text-dark',
-                                    'paid'      => 'badge bg-primary',
-                                    'shipped'   => 'badge bg-info text-dark',
+                                    'ordered'   => 'badge bg-warning text-dark',
+                                    'in process'      => 'badge bg-primary',
+                                    'in route'   => 'badge bg-info text-dark',
                                     'delivered' => 'badge bg-success',
                                     'cancelled' => 'badge bg-danger',
                                     default     => 'badge bg-secondary',

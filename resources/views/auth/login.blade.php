@@ -1,9 +1,11 @@
 <x-guest-layout>
     <!-- Session Status -->
+     
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <!-- Title -->
     <div class="mb-4 text-center">
+           <p class="text-xl text-gray-600 dark:text-gray-400 mt-1">{{ __('Welcome back!') }}</p>
         <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">{{ __('Login to your account') }}</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('Enter your credentials to access your account') }}</p>
     </div>
