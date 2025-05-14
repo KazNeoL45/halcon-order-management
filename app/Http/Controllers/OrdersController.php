@@ -242,6 +242,16 @@ class OrdersController extends Controller
         return redirect()->route('orders.index')->with('success', 'Order marked as in transit successfully.');
     }
     /**
+     * Mark the specified order as in progress.
+     */
+    public function markInProgress(Request $request, Order $order)
+    {
+        $order->status = 'in progress';
+        $order->save();
+
+        return redirect()->route('orders.index')->with('success', 'Order marked as in progress successfully.');
+    }
+    /**
      * Mark the specified order as delivered and upload unload photo.
      */
     public function markDelivered(Request $request, Order $order)

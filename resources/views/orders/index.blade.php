@@ -91,26 +91,52 @@
                         </td>
                         <td>{{ number_format($order->total, 2) }}</td>
                         <td>
-                            <form action="{{ route('orders.destroy',$order->id) }}" method="POST" class="d-inline-flex">
-                                <a class="btn btn-info btn-sm me-1"
-                                href="{{ route('orders.show',$order->id) }}">
-                                <i class="fa-solid fa-list"></i> Show</a>
-                                <a class="btn btn-primary btn-sm me-1"
-                                   href="{{ route('orders.edit',$order->id) }}">
-                                    <i class="fa-solid fa-pen-to-square"></i> Edit
-                                </a>
-                                <button type="button" class="btn btn-warning btn-sm me-1" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-transit')">
-                                    <i class="fa-solid fa-truck"></i> Mark as In Transit
+                            <div class="dropdown">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="actionsDropdown{{ $order->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Actions
                                 </button>
-                                <button type="button" class="btn btn-success btn-sm me-1" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-delivered')">
-                                    <i class="fa-solid fa-check"></i> Mark as Delivered
-                                </button>
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this order?')">
-                                <i class="fa-solid fa-trash"></i> Delete
-                                </button>
-                            </form>
+                                <ul class="dropdown-menu" aria-labelledby="actionsDropdown{{ $order->id }}">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('orders.show',$order->id) }}">
+                                            <i class="fa-solid fa-list"></i> Show
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('orders.edit',$order->id) }}">
+                                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                                        </a>
+                                    </li>
+                                    @if($order->status == 'ordered')
+                                        <li>
+                                            <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-progress')">
+                                                <i class="fa-solid fa-spinner"></i> Mark as In Progress
+                                            </button>
+                                        </li>
+                                    @elseif($order->status == 'in progress')
+                                        <li>
+                                            <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-transit')">
+                                                <i class="fa-solid fa-truck"></i> Mark as In Transit
+                                            </button>
+                                        </li>
+                                    @elseif($order->status == 'in route')
+                                        <li>
+                                            <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-delivered')">
+                                                <i class="fa-solid fa-check"></i> Mark as Delivered
+                                            </button>
+                                        </li>
+                                    @endif
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form action="{{ route('orders.destroy',$order->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="fa-solid fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                 @empty
@@ -120,7 +146,7 @@
                 @endforelse
             </tbody>
         </table>
-        {{-- Modals for marking orders as in transit --}}
+        {{-- Modals for marking orders status transitions --}}
         @foreach ($orders as $order)
             <x-modal name="mark-order-{{ $order->id }}-in-transit" focusable>
                 <form action="{{ route('orders.markInTransit', $order) }}" method="POST" enctype="multipart/form-data" class="p-6">
@@ -133,6 +159,19 @@
                     <div class="flex justify-end">
                         <button type="button" class="btn btn-secondary btn-sm me-2" x-on:click="$dispatch('close')">Cancel</button>
                         <button type="submit" class="btn btn-primary btn-sm">Mark as In Transit</button>
+                    </div>
+                </form>
+            </x-modal>
+            <x-modal name="mark-order-{{ $order->id }}-in-progress" focusable>
+                <form action="{{ route('orders.markInProgress', $order) }}" method="POST" class="p-6">
+                    @csrf
+                    <h2 class="text-lg font-medium text-gray-900">Mark Order #{{ $order->id }} as In Progress</h2>
+                    <div class="mt-4 mb-4">
+                        Are you sure you want to mark this order as in progress?
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" class="btn btn-secondary btn-sm me-2" x-on:click="$dispatch('close')">Cancel</button>
+                        <button type="submit" class="btn btn-info btn-sm">Mark as In Progress</button>
                     </div>
                 </form>
             </x-modal>
