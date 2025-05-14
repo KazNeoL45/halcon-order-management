@@ -18,7 +18,7 @@ class OrdersController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Order::with('client')->orderBy('created_at', 'desc');
+        $query = Order::with('client')->orderBy('id', 'desc');
 
         if ($request->filled('invoice_number_filter')) {
             $query->where('invoice_number', 'like', '%' . $request->input('invoice_number_filter') . '%');
@@ -35,7 +35,7 @@ class OrdersController extends Controller
 
         $orders = $query->paginate(10)->appends($request->except('page'));
         $clients = Client::orderBy('name')->get();
-        $statuses = ['in process', 'in route', 'ordered', 'delivered', 'cancelled'];
+        $statuses = ['in_process', 'in_route', 'ordered', 'delivered', 'cancelled'];
 
         return view('orders.index', compact('orders', 'clients', 'statuses', 'request'));
     }
