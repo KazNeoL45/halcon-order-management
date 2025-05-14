@@ -7,6 +7,10 @@ use App\Http\Controllers\ClientController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RoleMiddleware;
 
+// Constrain route parameters to avoid conflicts (e.g., 'deleted-list')
+Route::pattern('order', '[0-9]+');
+Route::pattern('id', '[0-9]+');
+
 Route::get('/', function () {
     return view('welcome');
 });

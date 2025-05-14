@@ -119,7 +119,8 @@ class OrdersController extends Controller
     {
         // Validate order, address, and items (invoice_number unique except current)
         $request->validate([
-            'status'          => 'required|in:pending,paid,shipped,delivered,cancelled',
+            // Ensure status values match the Order model's statuses
+            'status'          => 'required|in:ordered,in_process,in_route,delivered,cancelled',
             'client_id'       => 'required|exists:clients,id',
             'invoice_number'  => 'required|unique:orders,invoice_number,' . $order->id,
             'invoice_date'    => 'required|date',
