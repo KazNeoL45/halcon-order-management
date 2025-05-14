@@ -9,9 +9,13 @@
             <div class="alert alert-success" role="alert">{{ session('success') }}</div>
         @endif
 
+        @php $role = auth()->user()->role->name; @endphp
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
-            <a class="btn btn-success btn-sm" href="{{ route('products.create') }}">
-            <i class="fa fa-plus"></i> Add New Product</a>
+            @if(in_array($role, ['Admin', 'Purchaser']))
+                <a class="btn btn-success btn-sm" href="{{ route('products.create') }}">
+                    <i class="fa fa-plus"></i> Add New Product
+                </a>
+            @endif
         </div>
 
         <table class="table table-bordered table-striped mt-2">
@@ -35,21 +39,25 @@
                         <td>{{ $product->stock }}</td>
                         <td>{{ $product->description }}</td>
                         <td>
-                            <form action="{{ route('products.destroy',$product->id) }}" method="POST">
-                                <a class="btn btn-info btn-sm"
-                                href="{{ route('products.show',$product->id) }}">
-                                <i class="fa-solid fa-list">
-                                </i> Show</a>
-                                <a class="btn btn-primary btn-sm"
-                                href="{{ route('products.edit',$product->id) }}">
-                                <i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                        <form action="{{ route('products.destroy',$product->id) }}" method="POST" class="d-inline-flex">
+                            @if(in_array($role, ['Admin', 'Sales', 'Route', 'Warehouse']))
+                                <a class="btn btn-info btn-sm me-1" href="{{ route('products.show',$product->id) }}">
+                                    <i class="fa-solid fa-list"></i> Show
+                                </a>
+                            @endif
+                            @if(in_array($role, ['Admin', 'Warehouse']))
+                                <a class="btn btn-primary btn-sm me-1" href="{{ route('products.edit',$product->id) }}">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                </a>
+                            @endif
+                            @if($role === 'Admin')
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="fa-solid fa-trash"></i>
-                                    Delete
+                                    <i class="fa-solid fa-trash"></i> Delete
                                 </button>
-                            </form>
+                            @endif
+                        </form>
                         </td>
                     </tr>
                 @empty

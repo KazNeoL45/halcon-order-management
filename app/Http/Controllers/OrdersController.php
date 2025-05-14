@@ -119,6 +119,7 @@ class OrdersController extends Controller
     {
         // Validate order, address, and items (invoice_number unique except current)
         $request->validate([
+            'status'          => 'required|in:pending,paid,shipped,delivered,cancelled',
             'client_id'       => 'required|exists:clients,id',
             'invoice_number'  => 'required|unique:orders,invoice_number,' . $order->id,
             'invoice_date'    => 'required|date',
@@ -150,7 +151,7 @@ class OrdersController extends Controller
 
         // Update order fields
         $order->update($request->only([
-            'client_id', 'invoice_number', 'invoice_date', 'total', 'notes'
+            'status', 'client_id', 'invoice_number', 'invoice_date', 'total', 'notes'
         ]));
 
         // Sync items: remove existing and re-add
@@ -240,5 +241,34 @@ class OrdersController extends Controller
         $order->save();
 
         return redirect()->route('orders.index')->with('success', 'Order marked as in transit successfully.');
+    }
+    /**
+     * Mark the specified order as in progress.
+     */
+    public function markInProgress(Request $request, Order $order)
+    {
+        $order->status = 'in progress';
+        $order->save();
+
+        return redirect()->route('orders.index')->with('success', 'Order marked as in progress successfully.');
+    }
+    /**
+     * Mark the specified order as delivered and upload unload photo.
+     */
+    public function markDelivered(Request $request, Order $order)
+    {
+        $request->validate([
+            'unload_photo' => 'required|image|max:2048',
+        ]);
+
+        if ($request->hasFile('unload_photo')) {
+            $path = $request->file('unload_photo')->store('unload_photos', 'public');
+            $order->unload_photo = $path;
+        }
+
+        $order->status = 'delivered';
+        $order->save();
+
+        return redirect()->route('orders.index')->with('success', 'Order marked as delivered successfully.');
     }
 }
