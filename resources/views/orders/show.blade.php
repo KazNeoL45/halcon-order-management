@@ -110,6 +110,34 @@
               </tbody>
           </table>
        </div>
+        @if($order->load_photo || $order->unload_photo)
+            <div class="row mt-4 mb-3">
+                @if($order->load_photo)
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <strong>Load Photo:</strong>
+                            <div class="mt-2">
+                                <a href="{{ route('orders.loadPhoto', $order) }}" target="_blank">
+                                    <img src="{{ route('orders.loadPhoto', $order) }}" alt="Load Photo" class="img-fluid img-thumbnail" style="max-height:200px;">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                @if($order->unload_photo)
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <strong>Unload Photo:</strong>
+                            <div class="mt-2">
+                                <a href="{{ route('orders.unloadPhoto', $order) }}" target="_blank">
+                                    <img src="{{ route('orders.unloadPhoto', $order) }}" alt="Unload Photo" class="img-fluid img-thumbnail" style="max-height:200px;">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        @endif
     </div>
 </div>
 @endsection

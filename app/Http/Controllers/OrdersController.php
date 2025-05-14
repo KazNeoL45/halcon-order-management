@@ -270,4 +270,34 @@ class OrdersController extends Controller
 
         return redirect()->route('orders.index')->with('success', 'Order marked as delivered successfully.');
     }
+    
+    /**
+     * Serve the load photo file for the specified order.
+     */
+    public function loadPhoto(Order $order)
+    {
+        if (!$order->load_photo) {
+            abort(404);
+        }
+        $path = storage_path('app/public/' . $order->load_photo);
+        if (!file_exists($path)) {
+            abort(404);
+        }
+        return response()->file($path);
+    }
+    
+    /**
+     * Serve the unload photo file for the specified order.
+     */
+    public function unloadPhoto(Order $order)
+    {
+        if (!$order->unload_photo) {
+            abort(404);
+        }
+        $path = storage_path('app/public/' . $order->unload_photo);
+        if (!file_exists($path)) {
+            abort(404);
+        }
+        return response()->file($path);
+    }
 }

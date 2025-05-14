@@ -32,6 +32,9 @@ Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales'])->group(funct
 Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales,Route,Warehouse'])->group(function () {
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
+    // Publicly accessible routes to serve order photos
+    Route::get('/orders/{order}/load-photo', [OrdersController::class, 'loadPhoto'])->name('orders.loadPhoto');
+    Route::get('/orders/{order}/unload-photo', [OrdersController::class, 'unloadPhoto'])->name('orders.unloadPhoto');
 });
 // Update orders (Admin and Sales)
 Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales'])->group(function () {
