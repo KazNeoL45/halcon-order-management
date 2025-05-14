@@ -33,8 +33,8 @@ Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales,Route,Warehouse
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
 });
-// Update orders (Admin, Route, Warehouse)
-Route::middleware(['auth', RoleMiddleware::class . ':Admin,Route,Warehouse'])->group(function () {
+// Update orders (Admin and Sales)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales'])->group(function () {
     Route::get('/orders/{order}/edit', [OrdersController::class, 'edit'])->name('orders.edit');
     Route::put('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update');
 });
@@ -76,7 +76,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':Admin'])->group(function ()
 
 // Products Routes
 // Read products (Admin, Sales, Route, Warehouse)
-Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales,Route,Warehouse'])->group(function () {
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales,Warehouse,Purchaser'])->group(function () {
     Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
     Route::get('/products/{product}', [ProductsController::class, 'show'])->name('products.show');
 });

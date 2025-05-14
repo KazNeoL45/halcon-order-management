@@ -40,7 +40,7 @@
                         <td>{{ $product->description }}</td>
                         <td>
                         <form action="{{ route('products.destroy',$product->id) }}" method="POST" class="d-inline-flex">
-                            @if(in_array($role, ['Admin', 'Sales', 'Route', 'Warehouse']))
+                            @if(in_array($role, ['Admin', 'Sales', 'Purchaser', 'Warehouse']))
                                 <a class="btn btn-info btn-sm me-1" href="{{ route('products.show',$product->id) }}">
                                     <i class="fa-solid fa-list"></i> Show
                                 </a>

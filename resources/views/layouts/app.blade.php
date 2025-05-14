@@ -24,7 +24,7 @@
             @include('layouts.navigation')
             <div class="flex">
                 <!-- Sidebar -->
-                <aside class="w-64 bg-white border-r h-[calc(100vh-4rem)]">
+                <aside class="w-64 bg-white border-r h-[min(calc(100vh-4rem),100vh)]">
                     <nav class="mt-6 space-y-1">
                         @php $role = auth()->user()->role->name; @endphp
                         <x-responsive-nav-link class="text-black" :href="route('dashboard')"
@@ -37,7 +37,7 @@
                                 {{ __('Orders') }}
                             </x-responsive-nav-link>
                         @endif
-                        @if(in_array($role, ['Admin', 'Sales', 'Route', 'Warehouse']))
+                        @if(in_array($role, ['Admin', 'Sales', 'Purchaser', 'Warehouse']))
                             <x-responsive-nav-link class="text-black" :href="route('products.index')"
                                 :active="request()->routeIs('products.*')">
                                 {{ __('Products') }}

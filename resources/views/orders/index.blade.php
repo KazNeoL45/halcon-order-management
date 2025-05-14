@@ -112,7 +112,7 @@
                                             <i class="fa-solid fa-list"></i> Show
                                         </a>
                                     </li>
-                                    @if(in_array($role, ['Admin', 'Route', 'Warehouse']))
+                                    @if(in_array($role, ['Admin', 'Sales']))
                                     <li>
                                         <a class="dropdown-item" href="{{ route('orders.edit',$order->id) }}">
                                             <i class="fa-solid fa-pen-to-square"></i> Edit
