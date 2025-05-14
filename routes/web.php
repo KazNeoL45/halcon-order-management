@@ -74,16 +74,16 @@ Route::middleware(['auth', RoleMiddleware::class . ':Admin'])->group(function ()
     Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
 });
 
+// Create products (Admin and Purchaser)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Purchaser'])->group(function () {
+    Route::get('/products/create', [ProductsController::class, 'create'])->name('products.create');
+    Route::post('/products', [ProductsController::class, 'store'])->name('products.store');
+});
 // Products Routes
 // Read products (Admin, Sales, Route, Warehouse)
 Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales,Warehouse,Purchaser'])->group(function () {
     Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
     Route::get('/products/{product}', [ProductsController::class, 'show'])->name('products.show');
-});
-// Create products (Admin and Purchaser)
-Route::middleware(['auth', RoleMiddleware::class . ':Admin,Purchaser'])->group(function () {
-    Route::get('/products/create', [ProductsController::class, 'create'])->name('products.create');
-    Route::post('/products', [ProductsController::class, 'store'])->name('products.store');
 });
 // Update products (Admin and Warehouse)
 Route::middleware(['auth', RoleMiddleware::class . ':Admin,Warehouse'])->group(function () {

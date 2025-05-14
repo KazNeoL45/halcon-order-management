@@ -44,7 +44,8 @@ class OrdersController extends Controller
     {
         $clients = Client::all();
         $products = Products::all();
-        $nextInvoice = random_int(10_000_000, 99_999_999);
+        $last = Order::max('invoice_number');
+        $nextInvoice = $last ? ((int)$last + 1) : 1;
         $countries = Country::all();
         $states = State::all();
         return view('orders.create', compact('clients', 'products', 'nextInvoice', 'countries', 'states'));
@@ -52,7 +53,6 @@ class OrdersController extends Controller
 
     public function store(Request $request)
     {
-        // Validate order, invoice, address, and items
         $request->validate([
             'client_id'       => 'required|exists:clients,id',
             'invoice_number'  => 'required|unique:orders,invoice_number',
@@ -71,16 +71,16 @@ class OrdersController extends Controller
             'quantity'        => 'required|array|min:1',
             'quantity.*'      => 'required|integer|min:1',
         ]);
-        // Create address record
+
         $address = Address::create($request->only([
             'street', 'external_number', 'colony', 'city', 'state_id', 'zip_code', 'country_id',
         ]));
-        // Create order record
+
         $order = Order::create(array_merge(
             $request->only(['client_id', 'invoice_number', 'invoice_date', 'status', 'total', 'notes']),
             ['address_id' => $address->id]
         ));
-        // Attach each item to order
+
         foreach ($request->input('product_id') as $idx => $productId) {
             $qty = $request->input('quantity')[$idx] ?? 1;
             $product = Products::find($productId);
