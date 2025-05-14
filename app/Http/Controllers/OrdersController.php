@@ -44,9 +44,7 @@ class OrdersController extends Controller
     {
         $clients = Client::all();
         $products = Products::all();
-        // determine next invoice number
-        $last = Order::max('invoice_number');
-        $nextInvoice = $last ? ((int)$last + 1) : 1;
+        $nextInvoice = random_int(10_000_000, 99_999_999);
         $countries = Country::all();
         $states = State::all();
         return view('orders.create', compact('clients', 'products', 'nextInvoice', 'countries', 'states'));
