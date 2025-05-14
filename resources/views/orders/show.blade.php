@@ -16,7 +16,19 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <strong>Status:</strong> <br/>
-                    <span class="d-block">{{ $order->status }}</span>
+                    @php
+                        $statusClass = match($order->status) {
+                            'pending'   => 'badge bg-warning text-dark',
+                            'paid'      => 'badge bg-primary',
+                            'shipped'   => 'badge bg-info text-dark',
+                            'delivered' => 'badge bg-success',
+                            'cancelled' => 'badge bg-danger',
+                            default     => 'badge bg-secondary',
+                        };
+                    @endphp
+                    <span class="{{ $statusClass }} d-inline-flex justify-content-center align-items-center p-2">
+                        {{ ucfirst($order->status) }}
+                    </span>
                 </div>
             </div>
             <div class="col-md-6">
