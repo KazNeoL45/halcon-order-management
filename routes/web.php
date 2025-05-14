@@ -34,14 +34,23 @@ Route::middleware(['auth', RoleMiddleware::class . ':Admin,Route,Warehouse'])->g
     Route::get('/orders/{order}/edit', [OrdersController::class, 'edit'])->name('orders.edit');
     Route::put('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update');
 });
+
+// Status transition routes with specific role permissions
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Warehouse'])->group(function () {
+    Route::post('/orders/{order}/mark-in-process', [OrdersController::class, 'markInProcess'])->name('orders.markInProcess');
+});
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Warehouse,Route'])->group(function () {
+    Route::post('/orders/{order}/mark-in-transit', [OrdersController::class, 'markInTransit'])->name('orders.markInTransit');
+});
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Route'])->group(function () {
+    Route::post('/orders/{order}/mark-delivered', [OrdersController::class, 'markDelivered'])->name('orders.markDelivered');
+});
+
 // Delete and restore orders (Admin)
 Route::middleware(['auth', RoleMiddleware::class . ':Admin'])->group(function () {
     Route::delete('/orders/{order}', [OrdersController::class, 'destroy'])->name('orders.destroy');
     Route::post('orders/{id}/restore', [OrdersController::class, 'restore'])->name('orders.restore');
     Route::get('orders/deleted-list', [OrdersController::class, 'deletedOrders'])->name('orders.deleted');
-    Route::post('/orders/{order}/mark-in-transit', [OrdersController::class, 'markInTransit'])->name('orders.markInTransit');
-    Route::post('/orders/{order}/mark-in-process', [OrdersController::class, 'markInProcess'])->name('orders.markInProcess');
-    Route::post('/orders/{order}/mark-delivered', [OrdersController::class, 'markDelivered'])->name('orders.markDelivered');
     Route::post('orders/{id}/restore', [OrdersController::class, 'restore'])->name('orders.restore');
     Route::resource('clients', ClientController::class);
 });

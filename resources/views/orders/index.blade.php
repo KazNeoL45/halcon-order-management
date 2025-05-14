@@ -121,19 +121,21 @@
                                         </a>
                                     </li>
                                     @endif
-                                    @if($order->status == 'ordered')
+                                    @if($order->status == 'ordered' && in_array($role, ['Admin', 'Warehouse']))
                                         <li>
                                             <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-process')">
                                                 <i class="fa-solid fa-spinner"></i> Mark as In Process
                                             </button>
                                         </li>
-                                    @elseif($order->status == 'in_process')
+                                    @endif
+                                    @if($order->status == 'in_process' && in_array($role, ['Admin', 'Warehouse', 'Route']))
                                         <li>
                                             <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-transit')">
                                                 <i class="fa-solid fa-truck"></i> Mark as In Transit
                                             </button>
                                         </li>
-                                    @elseif($order->status == 'in_route')
+                                    @endif
+                                    @if($order->status == 'in_route' && in_array($role, ['Admin', 'Route']))
                                         <li>
                                             <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-delivered')">
                                                 <i class="fa-solid fa-check"></i> Mark as Delivered
