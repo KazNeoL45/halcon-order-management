@@ -119,6 +119,7 @@ class OrdersController extends Controller
     {
         // Validate order, address, and items (invoice_number unique except current)
         $request->validate([
+            'status'          => 'required|in:pending,paid,shipped,delivered,cancelled',
             'client_id'       => 'required|exists:clients,id',
             'invoice_number'  => 'required|unique:orders,invoice_number,' . $order->id,
             'invoice_date'    => 'required|date',
@@ -150,7 +151,7 @@ class OrdersController extends Controller
 
         // Update order fields
         $order->update($request->only([
-            'client_id', 'invoice_number', 'invoice_date', 'total', 'notes'
+            'status', 'client_id', 'invoice_number', 'invoice_date', 'total', 'notes'
         ]));
 
         // Sync items: remove existing and re-add

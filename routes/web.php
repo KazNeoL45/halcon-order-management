@@ -5,6 +5,7 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\ClientController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\RoleMiddleware;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,26 +18,62 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+// Orders Routes
+// Create orders (Admin and Sales)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales'])->group(function () {
     Route::get('/orders/create', [OrdersController::class, 'create'])->name('orders.create');
-    Route::get('orders/deleted-list', [OrdersController::class, 'deletedOrders'])->name('orders.deleted'); 
-    Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
     Route::post('/orders', [OrdersController::class, 'store'])->name('orders.store');
+});
+// Read orders (Admin, Sales, Route, Warehouse)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales,Route,Warehouse'])->group(function () {
+    Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
+});
+// Update orders (Admin, Route, Warehouse)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Route,Warehouse'])->group(function () {
     Route::get('/orders/{order}/edit', [OrdersController::class, 'edit'])->name('orders.edit');
-    Route::put('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update'); 
+    Route::put('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update');
+});
+// Delete and restore orders (Admin)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin'])->group(function () {
     Route::delete('/orders/{order}', [OrdersController::class, 'destroy'])->name('orders.destroy');
-    Route::post('orders/{id}/restore', [OrdersController::class, 'restore'])->name('orders.restore');    
-    Route::resource('clients', ClientController::class);
+    Route::post('orders/{id}/restore', [OrdersController::class, 'restore'])->name('orders.restore');
+    Route::get('orders/deleted-list', [OrdersController::class, 'deletedOrders'])->name('orders.deleted');
 });
 
-Route::middleware('auth')->group(function () {
+// Clients Routes
+// Create clients (Admin and Sales)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales'])->group(function () {
+    Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
+    Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
+});
+// Manage clients (Admin)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin'])->group(function () {
+    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('/clients/{client}', [ClientController::class, 'show'])->name('clients.show');
+    Route::get('/clients/{client}/edit', [ClientController::class, 'edit'])->name('clients.edit');
+    Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
+    Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
+});
+
+// Products Routes
+// Read products (Admin, Sales, Route, Warehouse)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Sales,Route,Warehouse'])->group(function () {
     Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
+    Route::get('/products/{product}', [ProductsController::class, 'show'])->name('products.show');
+});
+// Create products (Admin and Purchaser)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Purchaser'])->group(function () {
     Route::get('/products/create', [ProductsController::class, 'create'])->name('products.create');
     Route::post('/products', [ProductsController::class, 'store'])->name('products.store');
-    Route::get('/products/{product}', [ProductsController::class, 'show'])->name('products.show');
+});
+// Update products (Admin and Warehouse)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin,Warehouse'])->group(function () {
     Route::get('/products/{product}/edit', [ProductsController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductsController::class, 'update'])->name('products.update');
+});
+// Delete products (Admin)
+Route::middleware(['auth', RoleMiddleware::class . ':Admin'])->group(function () {
     Route::delete('/products/{product}', [ProductsController::class, 'destroy'])->name('products.destroy');
 });
 

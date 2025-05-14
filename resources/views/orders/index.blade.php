@@ -46,13 +46,18 @@
             </form>
         </div>
 
+        @php $role = auth()->user()->role->name; @endphp
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
+            @if($role === 'Admin')
                 <a class="btn btn-warning btn-sm" href="{{ route('orders.deleted') }}">
-        <i class="fa fa-trash-restore"></i> View Deleted Orders
-    </a>
-
-            <a class="btn btn-success btn-sm" href="{{ route('orders.create') }}">
-            <i class="fa fa-plus"></i> Add New Order</a>
+                    <i class="fa fa-trash-restore"></i> View Deleted Orders
+                </a>
+            @endif
+            @if(in_array($role, ['Admin', 'Sales']))
+                <a class="btn btn-success btn-sm" href="{{ route('orders.create') }}">
+                    <i class="fa fa-plus"></i> Add New Order
+                </a>
+            @endif
         </div>
 
         <table class="table table-bordered table-striped mt-2">
@@ -91,19 +96,25 @@
                         </td>
                         <td>{{ number_format($order->total, 2) }}</td>
                         <td>
-                            <form action="{{ route('orders.destroy',$order->id) }}" method="POST" class="d-inline-flex">
-                                <a class="btn btn-info btn-sm me-1"
-                                href="{{ route('orders.show',$order->id) }}">
-                                <i class="fa-solid fa-list"></i> Show</a>
-                                <a class="btn btn-primary btn-sm me-1"
-                                href="{{ route('orders.edit',$order->id) }}">
-                                <i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                        <form action="{{ route('orders.destroy',$order->id) }}" method="POST" class="d-inline-flex">
+                            @if(in_array($role, ['Admin', 'Sales', 'Route', 'Warehouse']))
+                                <a class="btn btn-info btn-sm me-1" href="{{ route('orders.show',$order->id) }}">
+                                    <i class="fa-solid fa-list"></i> Show
+                                </a>
+                            @endif
+                            @if(in_array($role, ['Admin', 'Route', 'Warehouse']))
+                                <a class="btn btn-primary btn-sm me-1" href="{{ route('orders.edit',$order->id) }}">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                </a>
+                            @endif
+                            @if($role === 'Admin')
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this order?')">
-                                <i class="fa-solid fa-trash"></i> Delete
+                                    <i class="fa-solid fa-trash"></i> Delete
                                 </button>
-                            </form>
+                            @endif
+                        </form>
                         </td>
                     </tr>
                 @empty
