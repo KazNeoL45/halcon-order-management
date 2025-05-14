@@ -81,17 +81,25 @@
                         <td>{{ \Carbon\Carbon::parse($order->invoice_date)->format('Y-m-d') }}</td>
                         <td>
                             @php
+                                $statusName = match($order->status) {
+                                    'ordered'   => 'Ordered',
+                                    'in_process' => 'In Process',
+                                    'in_route'   => 'In Route',
+                                    'delivered' => 'Delivered',
+                                    'cancelled' => 'Cancelled',
+                                    default     => 'Unknown',
+                                };
                                 $statusClass = match($order->status) {
                                     'ordered'   => 'badge bg-warning text-dark',
-                                    'in process'      => 'badge bg-primary',
-                                    'in route'   => 'badge bg-info text-dark',
+                                    'in_process'      => 'badge bg-primary',
+                                    'in_route'   => 'badge bg-info text-dark',
                                     'delivered' => 'badge bg-success',
                                     'cancelled' => 'badge bg-danger',
                                     default     => 'badge bg-secondary',
                                 };
                             @endphp
                             <span class="{{ $statusClass }} d-inline-flex justify-content-center align-items-center p-2">
-                                {{ ucfirst($order->status) }}
+                                {{ $statusName }}
                             </span>
                         </td>
                         <td>{{ number_format($order->total, 2) }}</td>
@@ -115,17 +123,17 @@
                                     @endif
                                     @if($order->status == 'ordered')
                                         <li>
-                                            <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-progress')">
-                                                <i class="fa-solid fa-spinner"></i> Mark as In Progress
+                                            <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-process')">
+                                                <i class="fa-solid fa-spinner"></i> Mark as In Process
                                             </button>
                                         </li>
-                                    @elseif($order->status == 'in progress')
+                                    @elseif($order->status == 'in_process')
                                         <li>
                                             <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-transit')">
                                                 <i class="fa-solid fa-truck"></i> Mark as In Transit
                                             </button>
                                         </li>
-                                    @elseif($order->status == 'in route')
+                                    @elseif($order->status == 'in_route')
                                         <li>
                                             <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-delivered')">
                                                 <i class="fa-solid fa-check"></i> Mark as Delivered
@@ -171,16 +179,16 @@
                     </div>
                 </form>
             </x-modal>
-            <x-modal name="mark-order-{{ $order->id }}-in-progress" focusable>
-                <form action="{{ route('orders.markInProgress', $order) }}" method="POST" class="p-6">
+            <x-modal name="mark-order-{{ $order->id }}-in-process" focusable>
+                <form action="{{ route('orders.markInProcess', $order) }}" method="POST" class="p-6">
                     @csrf
-                    <h2 class="text-lg font-medium text-gray-900">Mark Order #{{ $order->id }} as In Progress</h2>
+                    <h2 class="text-lg font-medium text-gray-900">Mark Order #{{ $order->id }} as In Process</h2>
                     <div class="mt-4 mb-4">
-                        Are you sure you want to mark this order as in progress?
+                        Are you sure you want to mark this order as in process?
                     </div>
                     <div class="flex justify-end">
                         <button type="button" class="btn btn-secondary btn-sm me-2" x-on:click="$dispatch('close')">Cancel</button>
-                        <button type="submit" class="btn btn-info btn-sm">Mark as In Progress</button>
+                        <button type="submit" class="btn btn-info btn-sm">Mark as In Process</button>
                     </div>
                 </form>
             </x-modal>

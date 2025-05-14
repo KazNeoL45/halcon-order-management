@@ -35,7 +35,7 @@ class OrdersController extends Controller
 
         $orders = $query->paginate(10)->appends($request->except('page'));
         $clients = Client::orderBy('name')->get();
-        $statuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+        $statuses = ['in process', 'in route', 'ordered', 'delivered', 'cancelled'];
 
         return view('orders.index', compact('orders', 'clients', 'statuses', 'request'));
     }
@@ -222,7 +222,7 @@ class OrdersController extends Controller
 
         return redirect()->route('orders.deleted')->with('success', 'Order restored successfully.');
     }
-    
+
     /**
      * Mark the specified order as in transit and upload load photo.
      */
@@ -237,20 +237,20 @@ class OrdersController extends Controller
             $order->load_photo = $path;
         }
 
-        $order->status = 'in route';
+        $order->status = 'in_route';
         $order->save();
 
         return redirect()->route('orders.index')->with('success', 'Order marked as in transit successfully.');
     }
     /**
-     * Mark the specified order as in progress.
+     * Mark the specified order as in process.
      */
-    public function markInProgress(Request $request, Order $order)
+    public function markInProcess(Request $request, Order $order)
     {
-        $order->status = 'in progress';
+        $order->status = 'in_process';
         $order->save();
 
-        return redirect()->route('orders.index')->with('success', 'Order marked as in progress successfully.');
+        return redirect()->route('orders.index')->with('success', 'Order marked as in process successfully.');
     }
     /**
      * Mark the specified order as delivered and upload unload photo.

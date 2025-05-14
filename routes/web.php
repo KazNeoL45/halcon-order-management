@@ -40,9 +40,9 @@ Route::middleware(['auth', RoleMiddleware::class . ':Admin'])->group(function ()
     Route::post('orders/{id}/restore', [OrdersController::class, 'restore'])->name('orders.restore');
     Route::get('orders/deleted-list', [OrdersController::class, 'deletedOrders'])->name('orders.deleted');
     Route::post('/orders/{order}/mark-in-transit', [OrdersController::class, 'markInTransit'])->name('orders.markInTransit');
-    Route::post('/orders/{order}/mark-in-progress', [OrdersController::class, 'markInProgress'])->name('orders.markInProgress');
+    Route::post('/orders/{order}/mark-in-process', [OrdersController::class, 'markInProcess'])->name('orders.markInProcess');
     Route::post('/orders/{order}/mark-delivered', [OrdersController::class, 'markDelivered'])->name('orders.markDelivered');
-    Route::post('orders/{id}/restore', [OrdersController::class, 'restore'])->name('orders.restore');    
+    Route::post('orders/{id}/restore', [OrdersController::class, 'restore'])->name('orders.restore');
     Route::resource('clients', ClientController::class);
 });
 

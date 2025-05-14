@@ -17,17 +17,25 @@
                 <div class="form-group">
                     <strong>Status:</strong> <br/>
                     @php
+                        $statusName = match($order->status) {
+                            'ordered'   => 'Ordered',
+                            'in_process' => 'In Process',
+                            'in_route'   => 'In Route',
+                            'delivered' => 'Delivered',
+                            'cancelled' => 'Cancelled',
+                            default     => 'Unknown',
+                        };
                         $statusClass = match($order->status) {
-                            'pending'   => 'badge bg-warning text-dark',
-                            'paid'      => 'badge bg-primary',
-                            'shipped'   => 'badge bg-info text-dark',
+                            'ordered'   => 'badge bg-warning text-dark',
+                            'in_process'      => 'badge bg-primary',
+                            'in_route'   => 'badge bg-info text-dark',
                             'delivered' => 'badge bg-success',
                             'cancelled' => 'badge bg-danger',
                             default     => 'badge bg-secondary',
                         };
                     @endphp
                     <span class="{{ $statusClass }} d-inline-flex justify-content-center align-items-center p-2">
-                        {{ ucfirst($order->status) }}
+                        {{ $statusName }}
                     </span>
                 </div>
             </div>
