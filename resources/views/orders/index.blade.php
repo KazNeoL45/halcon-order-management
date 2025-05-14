@@ -46,13 +46,18 @@
             </form>
         </div>
 
+        @php $role = auth()->user()->role->name; @endphp
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
+            @if($role === 'Admin')
                 <a class="btn btn-warning btn-sm" href="{{ route('orders.deleted') }}">
-        <i class="fa fa-trash-restore"></i> View Deleted Orders
-    </a>
-
-            <a class="btn btn-success btn-sm" href="{{ route('orders.create') }}">
-            <i class="fa fa-plus"></i> Add New Order</a>
+                    <i class="fa fa-trash-restore"></i> View Deleted Orders
+                </a>
+            @endif
+            @if(in_array($role, ['Admin', 'Sales']))
+                <a class="btn btn-success btn-sm" href="{{ route('orders.create') }}">
+                    <i class="fa fa-plus"></i> Add New Order
+                </a>
+            @endif
         </div>
 
         <table class="table table-bordered table-striped mt-2">
@@ -101,11 +106,13 @@
                                             <i class="fa-solid fa-list"></i> Show
                                         </a>
                                     </li>
+                                    @if(in_array($role, ['Admin', 'Route', 'Warehouse']))
                                     <li>
                                         <a class="dropdown-item" href="{{ route('orders.edit',$order->id) }}">
                                             <i class="fa-solid fa-pen-to-square"></i> Edit
                                         </a>
                                     </li>
+                                    @endif
                                     @if($order->status == 'ordered')
                                         <li>
                                             <button type="button" class="dropdown-item" x-data="" x-on:click.prevent="$dispatch('open-modal', 'mark-order-{{ $order->id }}-in-progress')">
@@ -126,6 +133,7 @@
                                         </li>
                                     @endif
                                     <li><hr class="dropdown-divider"></li>
+                                    @if(in_array($role, ['Admin', 'Sales']))
                                     <li>
                                         <form action="{{ route('orders.destroy',$order->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order?');">
                                             @csrf
@@ -135,6 +143,7 @@
                                             </button>
                                         </form>
                                     </li>
+                                    @endif
                                 </ul>
                             </div>
                         </td>

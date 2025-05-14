@@ -26,26 +26,35 @@
                 <!-- Sidebar -->
                 <aside class="w-64 bg-white border-r h-[calc(100vh-4rem)]">
                     <nav class="mt-6 space-y-1">
+                        @php $role = auth()->user()->role->name; @endphp
                         <x-responsive-nav-link class="text-black" :href="route('dashboard')"
-                        :active="request()->routeIs('dashboard')">
+                            :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-responsive-nav-link>
-                        <x-responsive-nav-link class="text-black" :href="route('orders.index')"
-                        :active="request()->routeIs('orders.*')">
-                            {{ __('Orders') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link class="text-black" :href="route('products.index')"
-                        :active="request()->routeIs('products.*')">
-                            {{ __('Products') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link class="text-black" :href="route('clients.index')"
-                        :active="request()->routeIs('clients.*')">
-                            {{ __('Clients') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link class="text-black" :href="route('users.index')"
-                            :active="request()->routeIs('users.*')">
-                            {{ __('Users') }}
-                        </x-responsive-nav-link>
+                        @if(in_array($role, ['Admin', 'Sales', 'Route', 'Warehouse']))
+                            <x-responsive-nav-link class="text-black" :href="route('orders.index')"
+                                :active="request()->routeIs('orders.*')">
+                                {{ __('Orders') }}
+                            </x-responsive-nav-link>
+                        @endif
+                        @if(in_array($role, ['Admin', 'Sales', 'Route', 'Warehouse']))
+                            <x-responsive-nav-link class="text-black" :href="route('products.index')"
+                                :active="request()->routeIs('products.*')">
+                                {{ __('Products') }}
+                            </x-responsive-nav-link>
+                        @endif
+                        @if($role === 'Admin')
+                            <x-responsive-nav-link class="text-black" :href="route('clients.index')"
+                                :active="request()->routeIs('clients.*')">
+                                {{ __('Clients') }}
+                            </x-responsive-nav-link>
+                        @endif
+                        @if($role === 'Admin')
+                            <x-responsive-nav-link class="text-black" :href="route('users.index')"
+                                :active="request()->routeIs('users.*')">
+                                {{ __('Users') }}
+                            </x-responsive-nav-link>
+                        @endif
                     </nav>
                 </aside>
 

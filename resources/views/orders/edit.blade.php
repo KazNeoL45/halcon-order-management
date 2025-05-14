@@ -16,6 +16,18 @@
                     <h5>Purchase Details</h5>
                     <div class="row mb-3">
                         <div class="col-md-3">
+                            <label for="status" class="form-label"><strong>Status</strong></label>
+                            <select name="status" id="status" class="form-control">
+                                @foreach(['pending','paid','shipped','delivered','cancelled'] as $statusOption)
+                                    <option value="{{ $statusOption }}" {{ old('status', $order->status) == $statusOption ? 'selected' : '' }}>
+                                        {{ ucfirst($statusOption) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
                             <label for="invoice_number" class="form-label"><strong>Invoice Number</strong></label>
                             <input type="text" name="invoice_number" id="invoice_number" class="form-control" value="{{ old('invoice_number', $order->invoice_number) }}" readonly>
                         </div>
