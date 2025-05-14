@@ -18,11 +18,11 @@
                         <div class="col-md-3">
                             <label for="status" class="form-label"><strong>Status</strong></label>
                             <select name="status" id="status" class="form-control">
-                                @foreach(['pending','paid','shipped','delivered','cancelled'] as $statusOption)
-                                    <option value="{{ $statusOption }}" {{ old('status', $order->status) == $statusOption ? 'selected' : '' }}>
-                                        {{ ucfirst($statusOption) }}
-                                    </option>
-                                @endforeach
+                            @foreach(['ordered','in_process','in_route','delivered','cancelled'] as $statusOption)
+                                <option value="{{ $statusOption }}" {{ old('status', $order->status) == $statusOption ? 'selected' : '' }}>
+                                    {{ ucwords(str_replace('_', ' ', $statusOption)) }}
+                                </option>
+                            @endforeach
                             </select>
                         </div>
                     </div>
