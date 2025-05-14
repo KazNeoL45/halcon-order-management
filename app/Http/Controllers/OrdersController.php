@@ -222,4 +222,53 @@ class OrdersController extends Controller
 
         return redirect()->route('orders.deleted')->with('success', 'Order restored successfully.');
     }
+    
+    /**
+     * Mark the specified order as in transit and upload load photo.
+     */
+    public function markInTransit(Request $request, Order $order)
+    {
+        $request->validate([
+            'load_photo' => 'required|image|max:2048',
+        ]);
+
+        if ($request->hasFile('load_photo')) {
+            $path = $request->file('load_photo')->store('load_photos', 'public');
+            $order->load_photo = $path;
+        }
+
+        $order->status = 'in route';
+        $order->save();
+
+        return redirect()->route('orders.index')->with('success', 'Order marked as in transit successfully.');
+    }
+    /**
+     * Mark the specified order as in progress.
+     */
+    public function markInProgress(Request $request, Order $order)
+    {
+        $order->status = 'in progress';
+        $order->save();
+
+        return redirect()->route('orders.index')->with('success', 'Order marked as in progress successfully.');
+    }
+    /**
+     * Mark the specified order as delivered and upload unload photo.
+     */
+    public function markDelivered(Request $request, Order $order)
+    {
+        $request->validate([
+            'unload_photo' => 'required|image|max:2048',
+        ]);
+
+        if ($request->hasFile('unload_photo')) {
+            $path = $request->file('unload_photo')->store('unload_photos', 'public');
+            $order->unload_photo = $path;
+        }
+
+        $order->status = 'delivered';
+        $order->save();
+
+        return redirect()->route('orders.index')->with('success', 'Order marked as delivered successfully.');
+    }
 }

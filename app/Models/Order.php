@@ -24,6 +24,8 @@ class Order extends Model
         'delivery_address',
         'address_id', 
         'notes',
+        'load_photo',
+        'unload_photo',
     ];
 
     /**
